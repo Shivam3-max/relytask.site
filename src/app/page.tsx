@@ -1,5 +1,6 @@
 import Hero from "@/components/hero/Hero";
 import ScrollClaim from "@/components/home/ScrollClaim";
+import Reach from "@/components/home/Reach";
 import Pillars from "@/components/home/Pillars";
 import WorkStrip from "@/components/home/WorkStrip";
 import Numbers from "@/components/home/Numbers";
@@ -13,6 +14,7 @@ export default function Home() {
     <>
       <Hero />
       <ScrollClaim />
+      <Reach />
       <Pillars />
       <WorkStrip />
       <Numbers />
