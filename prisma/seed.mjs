@@ -5,7 +5,8 @@
  *
  *   npm run seed
  */
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import "dotenv/config";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client.js";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -13,9 +14,12 @@ import path from "node:path";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
-const adapter = new PrismaBetterSqlite3({
-  url: process.env.DATABASE_URL ?? "file:./dev.db",
-});
+if (!process.env.DATABASE_URL) {
+  console.error("DATABASE_URL is not set. Copy .env.example to .env first.");
+  process.exit(1);
+}
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 /** The lib files are TypeScript, so pull the data out with a tiny eval shim. */

@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { randomUUID } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { isAuthed } from "@/lib/auth";
+import { store } from "@/lib/storage";
 
 export const runtime = "nodejs";
 
@@ -50,22 +48,22 @@ export async function POST(request: Request) {
     );
   }
 
-  // Filename is generated, never taken from the upload — a client-supplied
-  // name is a path-traversal risk and nothing here needs the original.
-  const name = `${randomUUID()}.${allowed.ext}`;
-  const dir = path.join(process.cwd(), "public", "uploads");
-
   try {
-    await mkdir(dir, { recursive: true });
-    await writeFile(path.join(dir, name), Buffer.from(await file.arrayBuffer()));
+    const stored = await store(file, allowed.ext);
+    return NextResponse.json({
+      ok: true,
+      url: stored.url,
+      kind: allowed.kind,
+      bytes: file.size,
+      backend: stored.backend,
+    });
   } catch {
-    return NextResponse.json({ error: "Could not save the file." }, { status: 500 });
+    return NextResponse.json(
+      {
+        error:
+          "Could not save the file. On a read-only host, set BLOB_READ_WRITE_TOKEN so uploads go to blob storage.",
+      },
+      { status: 500 },
+    );
   }
-
-  return NextResponse.json({
-    ok: true,
-    url: `/uploads/${name}`,
-    kind: allowed.kind,
-    bytes: file.size,
-  });
 }

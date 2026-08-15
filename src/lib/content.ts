@@ -23,15 +23,10 @@ export type Testimonial = {
   order: number;
 };
 
-const blank = {
-  company: null,
-  mediaUrl: null,
-  mediaType: null,
-  posterUrl: null,
-  aspect: "16/9",
-  featured: false,
-};
-
+/**
+ * Kept as a self-contained literal: prisma/seed.mjs reads this array straight
+ * out of the file, so it must not reference anything defined elsewhere.
+ */
 export const FALLBACK_TESTIMONIALS: Testimonial[] = [
   {
     id: "seed-1",
@@ -39,7 +34,12 @@ export const FALLBACK_TESTIMONIALS: Testimonial[] = [
       "We'd been through two agencies. RelyTask was the first that asked to see our sales process before touching the ad account.",
     name: "Founder",
     role: "D2C wellness brand",
-    ...blank,
+    company: null,
+    mediaUrl: null,
+    mediaType: null,
+    posterUrl: null,
+    aspect: "16/9",
+    featured: false,
     order: 0,
   },
   {
@@ -48,7 +48,12 @@ export const FALLBACK_TESTIMONIALS: Testimonial[] = [
       "Thirty-one meetings with plant heads in ninety days, in a market where our ads had never worked. That changed the year.",
     name: "Director",
     role: "Industrial equipment",
-    ...blank,
+    company: null,
+    mediaUrl: null,
+    mediaType: null,
+    posterUrl: null,
+    aspect: "16/9",
+    featured: false,
     order: 1,
   },
   {
@@ -57,7 +62,12 @@ export const FALLBACK_TESTIMONIALS: Testimonial[] = [
       "They built the ERP and then ran the campaigns on top of it. One team, one number to call.",
     name: "Operations Head",
     role: "Manufacturing",
-    ...blank,
+    company: null,
+    mediaUrl: null,
+    mediaType: null,
+    posterUrl: null,
+    aspect: "16/9",
+    featured: false,
     order: 2,
   },
 ];
