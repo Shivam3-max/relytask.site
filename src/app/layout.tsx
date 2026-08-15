@@ -4,6 +4,8 @@ import "./globals.css";
 import { SITE } from "@/lib/site";
 import SmoothScroll from "@/components/SmoothScroll";
 import CurrencyProvider from "@/components/CurrencyProvider";
+import ChromeGate from "@/components/ChromeGate";
+import { getFx } from "@/lib/settings";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Cursor from "@/components/Cursor";
@@ -50,19 +52,25 @@ export const viewport: Viewport = {
   themeColor: "#ffffff",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const rates = await getFx();
+
   return (
     <html lang="en" className={`${archivo.variable} ${inter.variable} ${mono.variable}`}>
       <body className="grain antialiased">
-        <CurrencyProvider>
-          <SmoothScroll />
-          <Cursor />
-          <Header />
+        <CurrencyProvider rates={rates}>
+          <ChromeGate>
+            <SmoothScroll />
+            <Cursor />
+            <Header />
+          </ChromeGate>
           <main>{children}</main>
-          <Footer />
-          <WhatsAppFloat />
+          <ChromeGate>
+            <Footer />
+            <WhatsAppFloat />
+          </ChromeGate>
         </CurrencyProvider>
       </body>
     </html>

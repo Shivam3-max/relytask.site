@@ -1,27 +1,10 @@
 import Reveal from "../Reveal";
+import { getTestimonials } from "@/lib/content";
 
-const QUOTES = [
-  {
-    quote:
-      "We'd been through two agencies. RelyTask was the first that asked to see our sales process before touching the ad account.",
-    name: "Founder",
-    role: "D2C wellness brand",
-  },
-  {
-    quote:
-      "Thirty-one meetings with plant heads in ninety days, in a market where our ads had never worked. That changed the year.",
-    name: "Director",
-    role: "Industrial equipment",
-  },
-  {
-    quote:
-      "They built the ERP and then ran the campaigns on top of it. One team, one number to call.",
-    name: "Operations Head",
-    role: "Manufacturing",
-  },
-];
+export default async function Testimonials() {
+  const quotes = await getTestimonials();
+  if (!quotes.length) return null;
 
-export default function Testimonials() {
   return (
     <section
       className="border-t border-line py-20 md:py-28"
@@ -31,10 +14,10 @@ export default function Testimonials() {
         <p className="t-eyebrow">What clients say</p>
       </Reveal>
       <Reveal stagger="[data-q]" className="mt-10 grid gap-px bg-line md:grid-cols-3">
-        {QUOTES.map((q) => (
-          <figure key={q.quote} data-q className="bg-paper p-7 md:p-8">
+        {quotes.map((q) => (
+          <figure key={q.id} data-q className="bg-paper p-7 md:p-8">
             <blockquote className="text-[1.0625rem] leading-relaxed text-ink">
-              “{q.quote}”
+              &ldquo;{q.quote}&rdquo;
             </blockquote>
             <figcaption className="t-mono mt-6 text-ink-3">
               {q.name} · <span className="text-mist">{q.role}</span>

@@ -1,0 +1,81 @@
+import Link from "next/link";
+import { requireAdmin } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { deleteCaseStudy } from "../actions";
+import { AdminPage, Button, Card, Empty, LinkButton, Pill } from "@/components/admin/ui";
+import { CASE_STUDIES } from "@/lib/case-studies";
+
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  await requireAdmin();
+  const rows = await prisma.caseStudy.findMany({
+    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+  });
+
+  return (
+    <AdminPage
+      title="Work"
+      sub="Case studies shown on /work. While none are saved here the site falls back to the six written into the code, so the page is never empty."
+      action={<LinkButton href="/admin/work/new" variant="primary">Add a case study</LinkButton>}
+    >
+      {rows.length === 0 ? (
+        <>
+          <Empty>
+            Nothing saved yet — /work is currently serving the {CASE_STUDIES.length} built-in
+            case studies.
+          </Empty>
+          <Card title="Import the built-in ones" className="mt-6">
+            <p className="text-[0.875rem] leading-relaxed text-ink-3">
+              Run <code className="bg-paper-2 px-1.5 py-0.5">npm run seed</code> once to copy the
+              six existing case studies and three testimonials into the database. After that
+              you can edit them here.
+            </p>
+          </Card>
+        </>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {rows.map((c) => (
+            <Card key={c.id}>
+              <div className="flex flex-wrap items-start justify-between gap-5">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h3 className="text-[1.0625rem] font-semibold tracking-tight text-ink">
+                      {c.client}
+                    </h3>
+                    <Pill tone={c.published ? "qualified" : "lost"}>
+                      {c.published ? "live" : "draft"}
+                    </Pill>
+                    {c.featured && <Pill tone="new">featured</Pill>}
+                    {c.confidential && <Pill tone="contacted">NDA</Pill>}
+                  </div>
+                  <p className="mt-1.5 max-w-[62ch] text-[0.875rem] leading-relaxed text-ink-3">
+                    {c.title}
+                  </p>
+                  <p className="t-mono mt-2 text-mist">
+                    {c.category} · {c.industry} · /work/{c.slug}
+                  </p>
+                </div>
+
+                <div className="flex shrink-0 flex-wrap gap-2">
+                  <Link
+                    href={`/work/${c.slug}`}
+                    target="_blank"
+                    className="t-mono border border-line px-4 py-2.5 text-ink-3 transition-colors duration-200 hover:border-ink hover:text-ink"
+                  >
+                    View ↗
+                  </Link>
+                  <LinkButton href={`/admin/work/${c.id}`}>Edit</LinkButton>
+                  <form action={deleteCaseStudy}>
+                    <input type="hidden" name="id" value={c.id} />
+                    <Button variant="danger">Delete</Button>
+                  </form>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </AdminPage>
+  );
+}

@@ -61,8 +61,11 @@ const getServerSnapshot = (): CurrencyCode => DEFAULT_CURRENCY;
 
 export default function CurrencyProvider({
   children,
+  rates,
 }: {
   children: React.ReactNode;
+  /** Admin-set INR-per-unit overrides, keyed by currency code. */
+  rates?: Partial<Record<CurrencyCode, number>>;
 }) {
   const code = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
@@ -76,14 +79,17 @@ export default function CurrencyProvider({
   }, []);
 
   const value = useMemo<Ctx>(() => {
-    const currency = getCurrency(code);
+    const base = getCurrency(code);
+    const override = rates?.[code];
+    const currency: Currency =
+      override && override > 0 ? { ...base, perINR: override } : base;
     return {
       currency,
       setCode,
       money: (inr: number) => formatMoney(inr, currency),
       compact: (inr: number) => formatCompact(inr, currency),
     };
-  }, [code, setCode]);
+  }, [code, setCode, rates]);
 
   return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>;
 }

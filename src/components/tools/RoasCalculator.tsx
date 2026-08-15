@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useCurrency } from "../CurrencyProvider";
-import { PAID, SOURCES } from "@/lib/benchmarks";
+import { PAID as PAID_META, SOURCES } from "@/lib/benchmarks";
+import type { BenchmarkSettings } from "@/lib/settings";
 import { formatNumber, formatPercent, RATES_UPDATED } from "@/lib/currency";
 import SendResult from "./SendResult";
 import {
@@ -22,7 +23,24 @@ type Channel = "meta" | "google";
 type Band = "low" | "mid" | "high";
 const BANDS: Band[] = ["low", "mid", "high"];
 
-export default function RoasCalculator() {
+export default function RoasCalculator({ bm }: { bm: BenchmarkSettings }) {
+  const PAID = useMemo(
+    () => ({
+      meta: {
+        cpc: bm.paid.metaCpc,
+        cpm: bm.paid.metaCpm,
+        note: PAID_META.meta.note,
+        source: PAID_META.meta.source,
+      },
+      google: {
+        cpc: bm.paid.googleCpc,
+        note: PAID_META.google.note,
+        source: PAID_META.google.source,
+      },
+      landingCvr: bm.paid.landingCvr,
+    }),
+    [bm],
+  );
   const { money, compact, currency } = useCurrency();
 
   const [channel, setChannel] = useState<Channel>("meta");
@@ -50,7 +68,7 @@ export default function RoasCalculator() {
 
       return { band, cpc, realCpc, clicks, conversions, revenue, grossProfit, roas, cac, netProfit };
     });
-  }, [channel, budget, aov, margin, cvr]);
+  }, [channel, budget, aov, margin, cvr, PAID]);
 
   const mid = model[1];
   const profitable = mid.roas >= breakEvenRoas;

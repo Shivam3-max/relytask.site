@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import PlaceholderArt from "@/components/PlaceholderArt";
-import { CASE_STUDIES } from "@/lib/case-studies";
+import { getCaseStudies } from "@/lib/content";
 import { SITE, whatsappHref } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -12,7 +12,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/work" },
 };
 
-export default function Page() {
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const CASE_STUDIES = await getCaseStudies();
   const [lead, ...rest] = CASE_STUDIES;
 
   return (

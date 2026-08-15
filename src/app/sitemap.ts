@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
 import { PILLARS, GROWTH_SYSTEM } from "@/lib/services";
 import { SERVICE_ROUTES } from "@/lib/service-detail";
-import { CASE_STUDIES } from "@/lib/case-studies";
+import { getCaseStudies } from "@/lib/content";
 import { TOOLS } from "@/lib/tools";
 import { SITE } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const CASE_STUDIES = await getCaseStudies();
   const now = new Date();
   const url = (path: string) => `${SITE.url}${path}`;
 

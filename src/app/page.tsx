@@ -9,7 +9,12 @@ import Process from "@/components/home/Process";
 import ToolsTeaser from "@/components/home/ToolsTeaser";
 import Testimonials from "@/components/home/Testimonials";
 
-export default function Home() {
+import { getStats } from "@/lib/settings";
+
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const stats = await getStats();
   return (
     <>
       <Hero />
@@ -17,7 +22,7 @@ export default function Home() {
       <Reach />
       <Pillars />
       <WorkStrip />
-      <Numbers />
+      <Numbers stats={stats} />
       <OutreachSpotlight />
       <Process />
       <ToolsTeaser />

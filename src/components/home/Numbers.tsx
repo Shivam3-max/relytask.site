@@ -4,14 +4,16 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const STATS = [
-  { value: 42, suffix: "+", label: "Projects delivered" },
-  { value: 28, suffix: "", label: "Services under one roof" },
-  { value: 3.4, suffix: "Cr", prefix: "₹", label: "Ad spend managed", decimals: 1 },
-  { value: 96, suffix: "%", label: "Clients who stay past year one" },
-];
+type Stat = {
+  value: number;
+  suffix: string;
+  prefix?: string;
+  label: string;
+  decimals?: number;
+};
 
-export default function Numbers() {
+export default function Numbers({ stats }: { stats: Stat[] }) {
+  const STATS = stats;
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

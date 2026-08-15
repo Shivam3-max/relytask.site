@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import PlaceholderArt from "@/components/PlaceholderArt";
-import { CASE_STUDIES, getCaseStudy } from "@/lib/case-studies";
+import { CASE_STUDIES } from "@/lib/case-studies";
+import { getCaseStudies, getCaseStudyBySlug } from "@/lib/content";
 import { SITE, whatsappHref } from "@/lib/site";
 
 type Params = { slug: string };
@@ -18,7 +19,7 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const c = getCaseStudy(slug);
+  const c = await getCaseStudyBySlug(slug);
   if (!c) return {};
 
   return {
@@ -36,10 +37,11 @@ export async function generateMetadata({
 
 export default async function Page({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
-  const c = getCaseStudy(slug);
+  const c = await getCaseStudyBySlug(slug);
   if (!c) notFound();
 
-  const others = CASE_STUDIES.filter((x) => x.slug !== c.slug).slice(0, 3);
+  const all = await getCaseStudies();
+  const others = all.filter((x) => x.slug !== c.slug).slice(0, 3);
 
   return (
     <>

@@ -12,6 +12,7 @@ import DigitalMaturity from "@/components/tools/DigitalMaturity";
 import { TOOLS, getTool } from "@/lib/tools";
 import { RATES_UPDATED } from "@/lib/currency";
 import { SITE } from "@/lib/site";
+import { getBenchmarks, getRateCard } from "@/lib/settings";
 
 type Params = { slug: string };
 
@@ -105,16 +106,17 @@ const NOTES: Record<
   },
 };
 
-function ToolBody({ slug }: { slug: string }) {
+/** Numbers come from the database so the admin panel can change them. */
+async function ToolBody({ slug }: { slug: string }) {
   switch (slug) {
     case "cost-estimator":
-      return <CostEstimator />;
+      return <CostEstimator card={await getRateCard()} />;
     case "outreach-roi":
-      return <OutreachROI />;
+      return <OutreachROI bm={await getBenchmarks()} />;
     case "roas-calculator":
-      return <RoasCalculator />;
+      return <RoasCalculator bm={await getBenchmarks()} />;
     case "automation-roi":
-      return <AutomationROI />;
+      return <AutomationROI bm={await getBenchmarks()} />;
     case "cac-ltv":
       return <CacLtv />;
     case "digital-maturity":
@@ -127,6 +129,9 @@ function ToolBody({ slug }: { slug: string }) {
 export function generateStaticParams() {
   return TOOLS.map((t) => ({ slug: t.slug }));
 }
+
+// Settings are read per request so admin edits show up without a rebuild.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -219,7 +224,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
 
       {/* ── The tool ──────────────────────────────────────────── */}
       <section className="pb-14 md:pb-20" style={{ paddingInline: "var(--gutter)" }}>
-        <ToolBody slug={slug} />
+        {await ToolBody({ slug })}
       </section>
 
       {/* ── How to read it ────────────────────────────────────── */}

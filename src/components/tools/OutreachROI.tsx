@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useCurrency } from "../CurrencyProvider";
-import { OUTREACH, SOURCES } from "@/lib/benchmarks";
+import { SOURCES } from "@/lib/benchmarks";
+import type { BenchmarkSettings } from "@/lib/settings";
 import { formatNumber, formatPercent, RATES_UPDATED } from "@/lib/currency";
 import SendResult from "./SendResult";
 import {
@@ -21,7 +22,8 @@ import {
 type Band = "low" | "mid" | "high";
 const BANDS: Band[] = ["low", "mid", "high"];
 
-export default function OutreachROI() {
+export default function OutreachROI({ bm }: { bm: BenchmarkSettings }) {
+  const OUTREACH = bm.outreach;
   const { money, compact, currency } = useCurrency();
 
   const [contacts, setContacts] = useState(2000);
@@ -46,7 +48,7 @@ export default function OutreachROI() {
 
       return { band, delivered, replies, positive, meetings, deals, revenue, grossProfit, cost, roi, costPerMeeting, cac };
     });
-  }, [contacts, dealValue, margin, monthlyCost]);
+  }, [contacts, dealValue, margin, monthlyCost, OUTREACH]);
 
   const mid = model[1];
   const inboxes = Math.max(1, Math.ceil(contacts / (OUTREACH.emailsPerInboxPerDay * 22)));

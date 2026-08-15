@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useCurrency } from "../CurrencyProvider";
-import { AUTOMATION } from "@/lib/benchmarks";
+import type { BenchmarkSettings } from "@/lib/settings";
 import { formatNumber, formatPercent, RATES_UPDATED } from "@/lib/currency";
 import SendResult from "./SendResult";
 import {
@@ -18,7 +18,7 @@ import {
   StatRow,
 } from "./ui";
 
-type Role = keyof typeof AUTOMATION.hourlyCost;
+type Role = "junior" | "executive" | "manager" | "senior";
 
 const ROLES: { id: Role; label: string; note: string }[] = [
   { id: "junior", label: "Junior / data entry", note: "₹180/hr loaded" },
@@ -27,7 +27,8 @@ const ROLES: { id: Role; label: string; note: string }[] = [
   { id: "senior", label: "Senior / specialist", note: "₹1,200/hr loaded" },
 ];
 
-export default function AutomationROI() {
+export default function AutomationROI({ bm }: { bm: BenchmarkSettings }) {
+  const AUTOMATION = bm.automation;
   const { money, compact, currency } = useCurrency();
 
   const [people, setPeople] = useState(3);
@@ -58,7 +59,7 @@ export default function AutomationROI() {
       threeYearNet,
       fteEquivalent,
     };
-  }, [people, hoursPerWeek, role, share, buildCost, runCost]);
+  }, [people, hoursPerWeek, role, share, buildCost, runCost, AUTOMATION]);
 
   const worthIt = model.paybackMonths <= 18 && model.savedCostMonth > 0;
 

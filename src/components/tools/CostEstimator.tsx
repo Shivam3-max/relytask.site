@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useCurrency } from "../CurrencyProvider";
-import { DEFAULT_RATE_CARD as CARD, estimate } from "@/lib/pricing";
+import { estimate, type RateCard } from "@/lib/pricing";
 import { GST_RATE, SOURCES } from "@/lib/benchmarks";
 import { RATES_UPDATED } from "@/lib/currency";
 import SendResult from "./SendResult";
@@ -19,7 +19,8 @@ import {
   Toggle,
 } from "./ui";
 
-export default function CostEstimator() {
+export default function CostEstimator({ card }: { card: RateCard }) {
+  const CARD = card;
   const { money, currency } = useCurrency();
 
   const [buildType, setBuildType] = useState(CARD.buildTypes[1].id);
@@ -34,7 +35,7 @@ export default function CostEstimator() {
 
   const result = useMemo(
     () => estimate({ buildType, pages, features, design, cms, integrations, support, rush }, CARD),
-    [buildType, pages, features, design, cms, integrations, support, rush],
+    [buildType, pages, features, design, cms, integrations, support, rush, CARD],
   );
 
   const tax = (n: number) => (gst ? n * (1 + GST_RATE) : n);
