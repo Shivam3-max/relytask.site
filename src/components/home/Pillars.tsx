@@ -5,7 +5,7 @@ import { PILLARS, GROWTH_SYSTEM } from "@/lib/services";
 export default function Pillars() {
   return (
     <section
-      className="pb-20 md:pb-32"
+      className="py-20 md:py-32"
       style={{ paddingInline: "var(--gutter)" }}
       id="pillars"
     >
@@ -16,7 +16,7 @@ export default function Pillars() {
         </h2>
       </Reveal>
 
-      <Reveal stagger="[data-pillar]" className="mt-12 grid gap-px bg-line md:grid-cols-3">
+      <Reveal stagger="[data-pillar]" className="mt-14 grid gap-px bg-line md:mt-16 md:grid-cols-3">
         {PILLARS.map((p) => (
           <Link
             key={p.id}
