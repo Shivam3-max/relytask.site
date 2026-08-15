@@ -98,6 +98,24 @@ body {
   transform: translateY(18px);
 }
 
+/* ── Scroll reveal ─────────────────────────────────────────────
+   Armed by JS before paint, released by IntersectionObserver. The hidden
+   state only ever exists when JS is alive to undo it, so a stalled frame
+   loop or a missing observer leaves content visible rather than blank. */
+[data-reveal-armed] {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 26px));
+  transition:
+    opacity 0.9s var(--ease-out-soft) var(--reveal-d, 0s),
+    transform 0.9s var(--ease-out-soft) var(--reveal-d, 0s);
+  will-change: opacity, transform;
+}
+
+[data-reveal-armed][data-reveal-in] {
+  opacity: 1;
+  transform: none;
+}
+
 /* ── Grain ─────────────────────────────────────────────────── */
 .grain::after {
   content: "";
@@ -133,6 +151,11 @@ body {
   .fade-up {
     opacity: 1 !important;
     transform: none !important;
+  }
+  [data-reveal-armed] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
   *,
   *::before,

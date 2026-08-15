@@ -31,6 +31,11 @@ export default function Numbers() {
       return;
     }
 
+    const write = (n: HTMLElement) =>
+      (n.textContent = Number(n.dataset.count).toFixed(
+        Number(n.dataset.decimals ?? 0),
+      ));
+
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
       nodes.forEach((n) => {
@@ -48,7 +53,32 @@ export default function Numbers() {
         });
       });
     }, el);
-    return () => ctx.revert();
+
+    // If the frame loop never runs, the counters would sit at zero and quietly
+    // report the wrong numbers. Once a stat has been on screen long enough for
+    // the tween to have finished, fill in anything still showing the placeholder.
+    const timers = new Map<HTMLElement, number>();
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const n = e.target as HTMLElement;
+        if (e.isIntersecting) {
+          if (timers.has(n)) continue;
+          timers.set(
+            n,
+            window.setTimeout(() => {
+              if (n.textContent === "0") write(n);
+            }, 3000),
+          );
+        }
+      }
+    });
+    nodes.forEach((n) => io.observe(n));
+
+    return () => {
+      ctx.revert();
+      io.disconnect();
+      timers.forEach((t) => clearTimeout(t));
+    };
   }, []);
 
   return (
