@@ -86,7 +86,7 @@ export const GROWTH_SYSTEM = {
 };
 
 export const ALL_SERVICES = PILLARS.flatMap((p) =>
-  p.services.map((s) => ({ ...s, pillar: p.id, href: `${p.href}#${s.slug}` })),
+  p.services.map((s) => ({ ...s, pillar: p.id, href: `${p.href}/${s.slug}` })),
 );
 
 export const PROCESS = [

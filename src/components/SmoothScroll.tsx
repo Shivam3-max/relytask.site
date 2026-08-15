@@ -8,6 +8,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 export default function SmoothScroll() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // ?static leaves native scrolling in place — same escape hatch the reveal
+    // components use, so a page can be captured without animation in flight.
+    if (new URLSearchParams(window.location.search).has("static")) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
