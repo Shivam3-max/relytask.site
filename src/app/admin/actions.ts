@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { checkPassword, clearSession, isAuthed, setSession } from "@/lib/auth";
+import { adminConfigError, checkPassword, clearSession, isAuthed, setSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { KEYS, resetSetting, write } from "@/lib/settings";
 import type { RateCard } from "@/lib/pricing";
@@ -38,6 +38,9 @@ const pairs = (v: FormDataEntryValue | null, aKey: string, bKey: string) =>
 /* ── Auth ─────────────────────────────────────────────────────── */
 
 export async function login(_prev: { error?: string } | undefined, formData: FormData) {
+  const misconfigured = adminConfigError();
+  if (misconfigured) return { error: misconfigured };
+
   const password = str(formData.get("password"), 200);
   if (!password) return { error: "Enter the password." };
   if (!checkPassword(password)) return { error: "That password is not right." };
