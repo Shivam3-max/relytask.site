@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Logo from "./Logo";
+import CurrencySwitch from "./CurrencySwitch";
 import { PILLARS, GROWTH_SYSTEM } from "@/lib/services";
 import { SITE } from "@/lib/site";
 
@@ -60,6 +61,7 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
+            <CurrencySwitch className="hidden md:inline-flex" />
             <Link
               href="/contact"
               className="hidden items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-[0.8125rem] font-medium text-paper transition-colors duration-300 hover:bg-flame sm:inline-flex"
@@ -125,6 +127,11 @@ export default function Header() {
                 </Link>
               ),
             )}
+          </div>
+
+          <div className="mt-9">
+            <p className="t-eyebrow">Show prices in</p>
+            <CurrencySwitch className="mt-3" />
           </div>
 
           <div className="mt-10 flex flex-col gap-1.5 text-[0.9375rem] text-ink-3">

@@ -92,9 +92,9 @@ export function arcPoints(a: Vec3, b: Vec3, steps: number, lift: number): Vec3[]
 // ── Where the work goes ──────────────────────────────────────────
 
 export const ORIGIN = {
-  label: "Mohali, India",
-  lon: 76.72,
-  lat: 30.7,
+  label: "India",
+  lon: 78.9,
+  lat: 22.5,
 };
 
 export type Destination = {

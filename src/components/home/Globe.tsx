@@ -278,10 +278,10 @@ export default function Globe({ className = "" }: { className?: string }) {
         ctx.fill();
 
         if (R > 130) {
-          ctx.font = `600 ${Math.round(R * 0.056)}px ui-monospace, monospace`;
+          ctx.font = `600 ${Math.round(R * 0.062)}px ui-monospace, monospace`;
           ctx.fillStyle = "rgba(255,255,255,0.94)";
           ctx.textBaseline = "middle";
-          label("MOHALI · INDIA", x, y, R * 0.05, R * 0.05);
+          label("INDIA", x, y, R * 0.05, R * 0.05);
         }
       }
     };
@@ -344,8 +344,8 @@ export default function Globe({ className = "" }: { className?: string }) {
     <div ref={wrap} className={`relative ${className}`}>
       <canvas ref={canvas} className="block h-full w-full" aria-hidden="true" />
       <span className="sr-only">
-        A globe showing delivery routes from Mohali, India to{" "}
-        {DESTINATIONS.map((d) => d.region).join(", ")}.
+        A globe showing delivery routes from India to{" "}
+        {[...new Set(DESTINATIONS.map((d) => d.region))].join(", ")}.
       </span>
     </div>
   );

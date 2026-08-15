@@ -3,6 +3,7 @@ import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/site";
 import SmoothScroll from "@/components/SmoothScroll";
+import CurrencyProvider from "@/components/CurrencyProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Cursor from "@/components/Cursor";
@@ -55,12 +56,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${archivo.variable} ${inter.variable} ${mono.variable}`}>
       <body className="grain antialiased">
-        <SmoothScroll />
-        <Cursor />
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <WhatsAppFloat />
+        <CurrencyProvider>
+          <SmoothScroll />
+          <Cursor />
+          <Header />
+          <main>{children}</main>
+          <Footer />
+          <WhatsAppFloat />
+        </CurrencyProvider>
       </body>
     </html>
   );

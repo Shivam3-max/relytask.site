@@ -85,7 +85,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
     <>
       {/* ── Hero ──────────────────────────────────────────────── */}
       <section
-        className="pt-[calc(var(--nav-h)+3rem)] pb-14 md:pb-20"
+        className="pt-10 md:pt-14 pb-14 md:pb-20"
         style={{ paddingInline: "var(--gutter)" }}
       >
         <Reveal>

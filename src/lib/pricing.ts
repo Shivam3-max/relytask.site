@@ -112,8 +112,8 @@ export const DEFAULT_RATE_CARD: RateCard = {
   integrations: { perIntegration: 38000, daysPer: 4 },
   support: [
     { id: "none", label: "No AMC", cost: 0, days: 0 },
-    { id: "basic", label: "Basic AMC", note: "₹6,000/mo — hosting, backups, fixes", cost: 72000, days: 0 },
-    { id: "growth", label: "Growth AMC", note: "₹15,000/mo — plus changes & reporting", cost: 180000, days: 0 },
+    { id: "basic", label: "Basic AMC", note: "Hosting, backups, fixes", cost: 72000, days: 0 },
+    { id: "growth", label: "Growth AMC", note: "Plus changes, reporting and priority support", cost: 180000, days: 0 },
   ],
   bandWidth: 0.15,
   rushMultiplier: 1.35,

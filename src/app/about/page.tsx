@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import PlaceholderArt from "@/components/PlaceholderArt";
 import { PILLARS, PROCESS } from "@/lib/services";
 import { DESTINATIONS } from "@/lib/globe";
 import { SITE, whatsappHref } from "@/lib/site";
@@ -72,6 +73,88 @@ export default function Page() {
             </div>
           ))}
         </Reveal>
+      </section>
+
+      {/* ── Founder ───────────────────────────────────────────── */}
+      <section
+        className="border-t border-line py-14 md:py-20"
+        style={{ paddingInline: "var(--gutter)" }}
+      >
+        <Reveal>
+          <p className="t-eyebrow">The founder</p>
+        </Reveal>
+
+        <div className="mt-8 grid gap-10 md:grid-cols-[0.85fr_1.15fr] md:gap-16">
+          <Reveal>
+            <PlaceholderArt seed={21} ratio="aspect-[4/5]" label="Shivam Bhandari" />
+            <div className="mt-5 flex flex-wrap gap-x-8 gap-y-3">
+              {[
+                { k: "Started at", v: "15" },
+                { k: "Today", v: "21" },
+                { k: "Based in", v: "Mohali" },
+              ].map((s) => (
+                <div key={s.k}>
+                  <p className="t-mono text-mist">{s.k}</p>
+                  <p className="t-display mt-1 text-[1.5rem] text-ink">{s.v}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+
+          <Reveal>
+            <h2 className="t-display max-w-[16ch] text-[clamp(2rem,5.5vw,3.75rem)] text-ink">
+              Shivam <span className="grad-flame">Bhandari</span>
+            </h2>
+            <p className="t-mono mt-4 text-ink-3">Founder</p>
+
+            <div className="mt-7 max-w-[60ch] text-[1.0625rem] leading-[1.75] text-ink-2">
+              <p>
+                I started at fifteen. Not with a plan, and not with the route
+                most people around me were taking — the one where you finish the
+                degree first and think about the work later. I went the other
+                way round, and I have been building ever since.
+              </p>
+              <p className="mt-5">
+                Six years on I am twenty-one, and the thing that started as
+                curiosity turned into a business with a specific obsession:
+                that a team sitting in Mohali can do work that stands up
+                anywhere in the world. Not cheaper work with the corners
+                sanded off. The same standard, at a cost base the market has
+                not caught up to yet.
+              </p>
+              <p className="mt-5">
+                That is the whole reason RelyTask exists and the reason we
+                built it to go global from day one. If you have ever been
+                quoted an agency price in London or New York and wondered what
+                exactly you were paying for, we are the answer to that
+                question.
+              </p>
+            </div>
+
+            <blockquote className="mt-9 border-l-2 border-flame pl-6">
+              <p className="t-display text-[clamp(1.25rem,3vw,1.875rem)] leading-[1.2] text-ink">
+                &ldquo;Starting young taught me the only thing that actually
+                compounds is doing the work and telling the truth about it.&rdquo;
+              </p>
+            </blockquote>
+
+            <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <Link
+                href="/contact"
+                data-cursor="Talk"
+                className="t-mono inline-flex items-center gap-3 bg-ink px-7 py-3.5 text-paper transition-colors duration-400 hover:bg-flame"
+              >
+                Talk to me directly →
+              </Link>
+              <a
+                href={`mailto:${SITE.email}`}
+                className="t-mono text-ink-3 link-underline"
+              >
+                {SITE.email}
+              </a>
+            </div>
+          </Reveal>
+        </div>
       </section>
 
       {/* ── The story ─────────────────────────────────────────── */}
