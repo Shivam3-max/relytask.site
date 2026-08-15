@@ -46,13 +46,13 @@ export default function WorkStrip() {
         style={{ paddingInline: "var(--gutter)" }}
       >
         <div>
-          <p className="t-eyebrow">Selected work</p>
+          <p className="t-eyebrow">IT projects</p>
           <h2 className="t-display mt-3 text-[clamp(2rem,5.5vw,3.75rem)] text-ink">
-            Proof, not <span className="grad-flame">promises.</span>
+            Software that <span className="grad-flame">went live.</span>
           </h2>
         </div>
-        <Link href="/work" className="t-mono hidden text-ink-2 link-underline md:block">
-          All work →
+        <Link href="/it-projects" className="t-mono hidden text-ink-2 link-underline md:block">
+          All IT projects →
         </Link>
       </div>
 
@@ -64,7 +64,7 @@ export default function WorkStrip() {
         {featured.map((cs) => (
           <Link
             key={cs.slug}
-            href={`/work/${cs.slug}`}
+            href={`/it-projects/${cs.slug}`}
             data-cursor="View"
             className="group w-[78vw] shrink-0 sm:w-[52vw] lg:w-[30rem]"
           >
@@ -95,10 +95,10 @@ export default function WorkStrip() {
         ))}
 
         <Link
-          href="/work"
+          href="/it-projects"
           className="flex w-[60vw] shrink-0 items-center justify-center border border-line sm:w-[30vw] lg:w-[18rem]"
         >
-          <span className="t-mono text-ink-2">All work →</span>
+          <span className="t-mono text-ink-2">All IT projects →</span>
         </Link>
       </div>
     </section>

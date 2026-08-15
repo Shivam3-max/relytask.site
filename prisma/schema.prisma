@@ -79,7 +79,19 @@ model Testimonial {
   quote     String
   name      String
   role      String
+  company   String?
+
+  /// Uploaded video or image, served from /uploads.
+  mediaUrl  String?
+  /// "video" | "image"
+  mediaType String?
+  /// Optional still shown before a video plays.
+  posterUrl String?
+  /// Aspect ratio of the media, e.g. "16/9".
+  aspect    String  @default("16/9")
+
   published Boolean  @default(true)
+  featured  Boolean  @default(false)
   order     Int      @default(0)
   createdAt DateTime @default(now())
 }

@@ -55,9 +55,9 @@ export default function CaseStudyForm({ row }: { row?: Row }) {
 
   return (
     <AdminPage
-      title={editing ? `Edit — ${row!.client}` : "New case study"}
-      sub="Everything here maps straight onto the public case study page."
-      action={<LinkButton href="/admin/work">← Back to work</LinkButton>}
+      title={editing ? `Edit — ${row!.client}` : "New IT project"}
+      sub="Everything here maps straight onto the public project page."
+      action={<LinkButton href="/admin/work">← Back to projects</LinkButton>}
     >
       <form action={saveCaseStudy} className="flex flex-col gap-6">
         {editing && <input type="hidden" name="id" value={row!.id} />}
@@ -68,7 +68,7 @@ export default function CaseStudyForm({ row }: { row?: Row }) {
             <Text
               name="slug"
               label="URL slug"
-              hint="Lowercase, hyphens. Becomes /work/your-slug"
+              hint="Lowercase, hyphens. Becomes /it-projects/your-slug"
               defaultValue={row?.slug}
               required
               placeholder="wise369"
@@ -196,7 +196,7 @@ export default function CaseStudyForm({ row }: { row?: Row }) {
         </Card>
 
         <div className="flex flex-wrap gap-3">
-          <Button>{editing ? "Save changes" : "Create case study"}</Button>
+          <Button>{editing ? "Save changes" : "Create project"}</Button>
           <LinkButton href="/admin/work">Cancel</LinkButton>
         </div>
       </form>

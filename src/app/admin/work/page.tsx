@@ -15,15 +15,15 @@ export default async function Page() {
 
   return (
     <AdminPage
-      title="Work"
-      sub="Case studies shown on /work. While none are saved here the site falls back to the six written into the code, so the page is never empty."
-      action={<LinkButton href="/admin/work/new" variant="primary">Add a case study</LinkButton>}
+      title="IT Projects"
+      sub="Projects shown on /it-projects. While none are saved here the site falls back to the six written into the code, so the page is never empty."
+      action={<LinkButton href="/admin/work/new" variant="primary">Add a project</LinkButton>}
     >
       {rows.length === 0 ? (
         <>
           <Empty>
-            Nothing saved yet — /work is currently serving the {CASE_STUDIES.length} built-in
-            case studies.
+            Nothing saved yet — /it-projects is currently serving the {CASE_STUDIES.length} built-in
+            projects.
           </Empty>
           <Card title="Import the built-in ones" className="mt-6">
             <p className="text-[0.875rem] leading-relaxed text-ink-3">
@@ -53,13 +53,13 @@ export default async function Page() {
                     {c.title}
                   </p>
                   <p className="t-mono mt-2 text-mist">
-                    {c.category} · {c.industry} · /work/{c.slug}
+                    {c.category} · {c.industry} · /it-projects/{c.slug}
                   </p>
                 </div>
 
                 <div className="flex shrink-0 flex-wrap gap-2">
                   <Link
-                    href={`/work/${c.slug}`}
+                    href={`/it-projects/${c.slug}`}
                     target="_blank"
                     className="t-mono border border-line px-4 py-2.5 text-ink-3 transition-colors duration-200 hover:border-ink hover:text-ink"
                   >

@@ -6,10 +6,10 @@ import { getCaseStudies } from "@/lib/content";
 import { SITE, whatsappHref } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Work",
+  title: "IT Projects",
   description:
-    "Selected work from RelyTask — websites and web apps, outbound engines, performance campaigns and custom ERP builds, with what changed and by how much.",
-  alternates: { canonical: "/work" },
+    "IT projects delivered by RelyTask — websites and web apps, custom CRM and ERP builds, automation and integrations, with what changed and by how much.",
+  alternates: { canonical: "/it-projects" },
 };
 
 export const dynamic = "force-dynamic";
@@ -26,14 +26,14 @@ export default async function Page() {
         style={{ paddingInline: "var(--gutter)" }}
       >
         <Reveal>
-          <p className="t-eyebrow">Selected work</p>
+          <p className="t-eyebrow">IT projects</p>
           <h1 className="t-display mt-5 max-w-[15ch] text-[clamp(2.5rem,8.5vw,6.5rem)] text-ink">
-            What we built, <span className="grad-flame">and what moved.</span>
+            Software we built, <span className="grad-flame">and what it changed.</span>
           </h1>
           <p className="mt-7 max-w-[52ch] text-[1.0625rem] leading-relaxed text-ink-2">
-            Every project below lists the problem we were handed, what we did
-            about it, and the numbers we can share. Where a client is under NDA
-            we say so rather than dressing the work up in vague adjectives.
+            Every build below lists the problem we were handed, what we shipped,
+            and the numbers we can share. Where a client is under NDA we say so
+            rather than dressing the work up in vague adjectives.
           </p>
         </Reveal>
       </section>
@@ -42,7 +42,7 @@ export default async function Page() {
       <section className="pb-12 md:pb-16" style={{ paddingInline: "var(--gutter)" }}>
         <Reveal>
           <Link
-            href={`/work/${lead.slug}`}
+            href={`/it-projects/${lead.slug}`}
             data-cursor="View"
             className="group grid gap-8 border-t border-line pt-8 md:grid-cols-[1.15fr_1fr] md:gap-12"
           >
@@ -92,7 +92,7 @@ export default async function Page() {
           {rest.map((c) => (
             <Link
               key={c.slug}
-              href={`/work/${c.slug}`}
+              href={`/it-projects/${c.slug}`}
               data-case
               data-cursor="View"
               className="group flex flex-col bg-paper p-6 transition-colors duration-400 hover:bg-paper-2 md:p-8"
@@ -139,7 +139,7 @@ export default async function Page() {
         <Reveal className="flex flex-wrap items-end justify-between gap-8">
           <div>
             <h2 className="t-display max-w-[18ch] text-[clamp(1.75rem,4.5vw,3rem)] text-ink">
-              Yours could be the next one.
+              Got a build in mind?
             </h2>
             <p className="mt-4 max-w-[44ch] text-[0.9375rem] leading-relaxed text-ink-3">
               Tell us what is actually going wrong. We will tell you what we

@@ -85,7 +85,7 @@ export default function Hero() {
               Start a project <span aria-hidden="true">→</span>
             </Link>
             <Link
-              href="/work"
+              href="/it-projects"
               className="inline-flex items-center gap-2 rounded-full border border-line px-6 py-3.5 text-[0.875rem] font-medium text-ink-2 transition-colors duration-300 hover:border-ink"
             >
               See the work

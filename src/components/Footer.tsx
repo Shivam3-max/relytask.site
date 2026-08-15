@@ -96,7 +96,8 @@ export default function Footer({ year }: { year: number }) {
           <p className="t-eyebrow">Company</p>
           <ul className="mt-4 flex flex-col gap-2.5">
             {[
-              { name: "Work", href: "/work" },
+              { name: "IT Projects", href: "/it-projects" },
+              { name: "Testimonials", href: "/testimonials" },
               { name: "Tools", href: "/tools" },
               { name: "About", href: "/about" },
               { name: "Contact", href: "/contact" },

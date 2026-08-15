@@ -14,8 +14,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: url("/"), changeFrequency: "monthly", priority: 1 },
     { url: url("/services"), changeFrequency: "monthly", priority: 0.9 },
     { url: url(GROWTH_SYSTEM.href), changeFrequency: "monthly", priority: 0.8 },
-    { url: url("/work"), changeFrequency: "monthly", priority: 0.8 },
+    { url: url("/it-projects"), changeFrequency: "monthly", priority: 0.8 },
     { url: url("/tools"), changeFrequency: "monthly", priority: 0.7 },
+    { url: url("/testimonials"), changeFrequency: "monthly", priority: 0.7 },
     { url: url("/about"), changeFrequency: "yearly", priority: 0.6 },
     { url: url("/contact"), changeFrequency: "yearly", priority: 0.9 },
     { url: url("/privacy"), changeFrequency: "yearly", priority: 0.2 },
@@ -35,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const work: MetadataRoute.Sitemap = CASE_STUDIES.map((c) => ({
-    url: url(`/work/${c.slug}`),
+    url: url(`/it-projects/${c.slug}`),
     changeFrequency: "yearly",
     priority: 0.6,
   }));

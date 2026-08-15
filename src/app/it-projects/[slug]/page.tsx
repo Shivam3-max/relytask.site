@@ -25,7 +25,7 @@ export async function generateMetadata({
   return {
     title: `${c.client} — ${c.title}`,
     description: c.summary,
-    alternates: { canonical: `/work/${slug}` },
+    alternates: { canonical: `/it-projects/${slug}` },
     openGraph: {
       title: `${c.client} — ${SITE.name}`,
       description: c.summary,
@@ -52,8 +52,8 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       >
         <Reveal>
           <nav className="t-mono flex items-center gap-2 text-mist">
-            <Link href="/work" className="link-underline hover:text-ink-2">
-              Work
+            <Link href="/it-projects" className="link-underline hover:text-ink-2">
+              IT Projects
             </Link>
             <span aria-hidden>/</span>
             <span className="text-ink-3">{c.client}</span>
@@ -217,13 +217,13 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         style={{ paddingInline: "var(--gutter)" }}
       >
         <Reveal>
-          <p className="t-eyebrow">More work</p>
+          <p className="t-eyebrow">More projects</p>
         </Reveal>
         <Reveal stagger="[data-other]" className="mt-6 grid gap-px bg-line md:grid-cols-3">
           {others.map((o) => (
             <Link
               key={o.slug}
-              href={`/work/${o.slug}`}
+              href={`/it-projects/${o.slug}`}
               data-other
               data-cursor="View"
               className="group bg-paper p-6 transition-colors duration-400 hover:bg-paper-2"

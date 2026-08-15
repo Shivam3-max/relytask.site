@@ -14,7 +14,22 @@ export type Testimonial = {
   quote: string;
   name: string;
   role: string;
+  company: string | null;
+  mediaUrl: string | null;
+  mediaType: string | null;
+  posterUrl: string | null;
+  aspect: string;
+  featured: boolean;
   order: number;
+};
+
+const blank = {
+  company: null,
+  mediaUrl: null,
+  mediaType: null,
+  posterUrl: null,
+  aspect: "16/9",
+  featured: false,
 };
 
 export const FALLBACK_TESTIMONIALS: Testimonial[] = [
@@ -24,6 +39,7 @@ export const FALLBACK_TESTIMONIALS: Testimonial[] = [
       "We'd been through two agencies. RelyTask was the first that asked to see our sales process before touching the ad account.",
     name: "Founder",
     role: "D2C wellness brand",
+    ...blank,
     order: 0,
   },
   {
@@ -32,6 +48,7 @@ export const FALLBACK_TESTIMONIALS: Testimonial[] = [
       "Thirty-one meetings with plant heads in ninety days, in a market where our ads had never worked. That changed the year.",
     name: "Director",
     role: "Industrial equipment",
+    ...blank,
     order: 1,
   },
   {
@@ -40,6 +57,7 @@ export const FALLBACK_TESTIMONIALS: Testimonial[] = [
       "They built the ERP and then ran the campaigns on top of it. One team, one number to call.",
     name: "Operations Head",
     role: "Manufacturing",
+    ...blank,
     order: 2,
   },
 ];
@@ -110,6 +128,12 @@ export async function getTestimonials(): Promise<Testimonial[]> {
       quote: r.quote,
       name: r.name,
       role: r.role,
+      company: r.company,
+      mediaUrl: r.mediaUrl,
+      mediaType: r.mediaType,
+      posterUrl: r.posterUrl,
+      aspect: r.aspect,
+      featured: r.featured,
       order: r.order,
     }));
   } catch {

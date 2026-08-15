@@ -110,11 +110,11 @@ export async function saveCaseStudy(formData: FormData) {
   else await prisma.caseStudy.create({ data });
 
   revalidatePath("/admin/work");
-  revalidatePath("/work");
+  revalidatePath("/it-projects");
   // The case page is prerendered, so it needs busting by path — including the
   // old path when a slug has been renamed.
-  revalidatePath(`/work/${data.slug}`);
-  if (previous && previous.slug !== data.slug) revalidatePath(`/work/${previous.slug}`);
+  revalidatePath(`/it-projects/${data.slug}`);
+  if (previous && previous.slug !== data.slug) revalidatePath(`/it-projects/${previous.slug}`);
   revalidatePath("/sitemap.xml");
 
   redirect("/admin/work");
@@ -126,8 +126,8 @@ export async function deleteCaseStudy(formData: FormData) {
     where: { id: str(formData.get("id"), 60) },
   });
   revalidatePath("/admin/work");
-  revalidatePath("/work");
-  revalidatePath(`/work/${removed.slug}`);
+  revalidatePath("/it-projects");
+  revalidatePath(`/it-projects/${removed.slug}`);
   revalidatePath("/sitemap.xml");
 }
 
@@ -137,10 +137,16 @@ export async function saveTestimonial(formData: FormData) {
   await guard();
   const id = str(formData.get("id"), 60);
   const data = {
-    quote: str(formData.get("quote"), 800),
+    quote: str(formData.get("quote"), 2000),
     name: str(formData.get("name"), 120),
     role: str(formData.get("role"), 120),
+    company: str(formData.get("company"), 160) || null,
+    mediaUrl: str(formData.get("mediaUrl"), 400) || null,
+    mediaType: str(formData.get("mediaType"), 20) || null,
+    posterUrl: str(formData.get("posterUrl"), 400) || null,
+    aspect: str(formData.get("aspect"), 12) || "16/9",
     order: num(formData.get("order"), 0),
+    featured: formData.get("featured") === "on",
     published: formData.get("published") === "on",
   };
 
@@ -149,6 +155,7 @@ export async function saveTestimonial(formData: FormData) {
 
   revalidatePath("/admin/testimonials");
   revalidatePath("/");
+  revalidatePath("/testimonials");
 }
 
 export async function deleteTestimonial(formData: FormData) {
@@ -156,6 +163,7 @@ export async function deleteTestimonial(formData: FormData) {
   await prisma.testimonial.delete({ where: { id: str(formData.get("id"), 60) } });
   revalidatePath("/admin/testimonials");
   revalidatePath("/");
+  revalidatePath("/testimonials");
 }
 
 /* ── Rate card ────────────────────────────────────────────────── */
