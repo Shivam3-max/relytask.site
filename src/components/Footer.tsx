@@ -6,7 +6,7 @@ import Logo from "./Logo";
 import { PILLARS, GROWTH_SYSTEM } from "@/lib/services";
 import { SITE, whatsappHref } from "@/lib/site";
 
-export default function Footer() {
+export default function Footer({ year }: { year: number }) {
   const [time, setTime] = useState("");
 
   useEffect(() => {
@@ -141,7 +141,7 @@ export default function Footer() {
         className="flex flex-col gap-2 py-6 text-[0.75rem] text-mist md:flex-row md:items-center md:justify-between"
       >
         <p>
-          © {new Date().getFullYear()} {SITE.legalName}. {SITE.tagline}.
+          © {year} {SITE.legalName}. {SITE.tagline}.
         </p>
         <div className="flex gap-5">
           <Link href="/privacy" className="link-underline">

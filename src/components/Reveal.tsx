@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 type Props = {
   children: React.ReactNode;
@@ -11,16 +11,16 @@ type Props = {
   y?: number;
 };
 
-/** useLayoutEffect arms the elements before paint, so nothing flashes. */
-const useArmEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
-
 /**
  * Scroll reveal that cannot leave content permanently invisible.
  *
  * Elements are hidden by JS and revealed by IntersectionObserver, with a
- * timeout that reveals anything still hidden. If any step fails — no JS, no
- * IntersectionObserver, reduced motion, a stalled frame loop — the content
- * simply stays visible. Nothing here depends on requestAnimationFrame.
+ * timeout behind it. If any step fails — no JS, no IntersectionObserver,
+ * reduced motion, a stalled frame loop — the content simply stays visible.
+ * Nothing here depends on requestAnimationFrame.
+ *
+ * Arming happens in the ref callback, which the browser runs during commit
+ * and before paint, so there is no flash and no server/client hook branch.
  */
 export default function Reveal({
   children,
@@ -29,29 +29,44 @@ export default function Reveal({
   delay = 0,
   y = 26,
 }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
 
-  useArmEffect(() => {
+  const shouldAnimate = () =>
+    typeof IntersectionObserver !== "undefined" &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+    !new URLSearchParams(window.location.search).has("static");
+
+  const targetsOf = useCallback(
+    (el: HTMLElement) =>
+      stagger ? Array.from(el.querySelectorAll<HTMLElement>(stagger)) : [el],
+    [stagger],
+  );
+
+  const attach = useCallback(
+    (el: HTMLDivElement | null) => {
+      ref.current = el;
+      if (!el || !shouldAnimate()) return;
+
+      for (const [i, t] of targetsOf(el).entries()) {
+        t.style.setProperty("--reveal-d", `${delay + (stagger ? i * 0.08 : 0)}s`);
+        t.style.setProperty("--reveal-y", `${y}px`);
+        t.dataset.revealArmed = "";
+      }
+    },
+    [targetsOf, stagger, delay, y],
+  );
+
+  useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (new URLSearchParams(window.location.search).has("static")) return;
-    if (typeof IntersectionObserver === "undefined") return;
 
-    const targets = stagger
-      ? Array.from(el.querySelectorAll<HTMLElement>(stagger))
-      : [el];
-    if (!targets.length) return;
-
-    for (const [i, t] of targets.entries()) {
-      t.style.setProperty("--reveal-d", `${delay + (stagger ? i * 0.08 : 0)}s`);
-      t.style.setProperty("--reveal-y", `${y}px`);
-      t.dataset.revealArmed = "";
-    }
-
+    const targets = targetsOf(el);
     const show = () => {
       for (const t of targets) t.dataset.revealIn = "";
     };
+
+    // Nothing was armed (reduced motion, ?static, no observer) — leave it be.
+    if (!targets.some((t) => "revealArmed" in t.dataset)) return;
 
     const io = new IntersectionObserver(
       (entries) => {
@@ -78,10 +93,10 @@ export default function Reveal({
         delete t.dataset.revealIn;
       }
     };
-  }, [stagger, delay, y]);
+  }, [targetsOf]);
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={attach} className={className}>
       {children}
     </div>
   );

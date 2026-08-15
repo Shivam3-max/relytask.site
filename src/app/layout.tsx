@@ -56,10 +56,19 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const rates = await getFx();
+  // Rendered on the server so the client never recomputes it from its own clock.
+  const year = new Date().getFullYear();
 
   return (
-    <html lang="en" className={`${archivo.variable} ${inter.variable} ${mono.variable}`}>
-      <body className="grain antialiased">
+    <html
+      lang="en"
+      className={`${archivo.variable} ${inter.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
+      {/* Extensions (password managers, Grammarly, Dark Reader) add attributes
+          to these two elements before React hydrates. Suppression here covers
+          only their own attributes, never their children. */}
+      <body className="grain antialiased" suppressHydrationWarning>
         <CurrencyProvider rates={rates}>
           <ChromeGate>
             <SmoothScroll />
@@ -68,7 +77,7 @@ export default async function RootLayout({
           </ChromeGate>
           <main>{children}</main>
           <ChromeGate>
-            <Footer />
+            <Footer year={year} />
             <WhatsAppFloat />
           </ChromeGate>
         </CurrencyProvider>
