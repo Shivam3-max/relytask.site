@@ -7,10 +7,10 @@ import { verifyPassword } from "./password";
 
 /**
  * Admin gate: email + password checked against the AdminUser table, a
- * signed httpOnly session cookie on top. The first account is created at
- * /admin/setup (gated by ADMIN_SECRET, only while the table is empty) —
- * for hosts with shell access, `npm run seed:admin` also works. No signup
- * flow beyond that, and no env-var shared password.
+ * signed httpOnly session cookie on top. Accounts are created directly in
+ * the database (see README for the SQL, or `npm run seed:admin` on hosts
+ * with shell access) — there is no signup flow and no env-var shared
+ * password.
  */
 
 const COOKIE = "relytask_admin";
@@ -33,11 +33,12 @@ function secret() {
 }
 
 /**
- * Whether ADMIN_SECRET itself is missing or unusable — checked on its own
- * (no DB round trip) because /admin/setup needs this answer before it can
- * even ask whether an admin account exists yet.
+ * What is stopping the admin panel from working, if anything. Returned to the
+ * login screen so a missing environment variable or an empty AdminUser table
+ * does not masquerade as a wrong password — which is exactly what it looked
+ * like on first deploy.
  */
-export function secretConfigError(): string | null {
+export async function adminConfigError(): Promise<string | null> {
   const configuredSecret = process.env.ADMIN_SECRET;
   if (!configuredSecret) {
     return process.env.NODE_ENV === "production"
@@ -47,20 +48,8 @@ export function secretConfigError(): string | null {
   if (configuredSecret.length < 16) {
     return "ADMIN_SECRET is too short — it needs at least 16 characters.";
   }
-  return null;
-}
-
-/**
- * What is stopping the admin panel from working, if anything. Returned to the
- * login screen so a missing environment variable or an empty AdminUser table
- * does not masquerade as a wrong password — which is exactly what it looked
- * like on first deploy.
- */
-export async function adminConfigError(): Promise<string | null> {
-  const secretError = secretConfigError();
-  if (secretError) return secretError;
   if ((await countAdminUsers()) === 0) {
-    return "No admin account exists yet. Create one at /admin/setup.";
+    return "No admin account exists yet. Insert one into the AdminUser table — see README.";
   }
   return null;
 }
@@ -81,17 +70,6 @@ export async function verifyCredentials(email: string, password: string) {
   const user = await getAdminByEmail(email.trim().toLowerCase());
   if (!user) return false;
   return verifyPassword(password, user.passwordHash);
-}
-
-/**
- * Gate for /admin/setup: proves the caller can read this server's
- * environment variables (i.e. is the operator), not just its URL.
- * Reuses ADMIN_SECRET rather than adding a second secret to configure.
- */
-export function verifySetupToken(token: string) {
-  const configured = process.env.ADMIN_SECRET;
-  if (!configured || configured.length < 16) return false;
-  return safeEqual(token, configured);
 }
 
 export function makeToken() {

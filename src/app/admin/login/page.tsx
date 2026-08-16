@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { adminConfigError, isAuthed } from "@/lib/auth";
 import LoginForm from "@/components/admin/LoginForm";
@@ -35,13 +34,6 @@ export default async function Page() {
         <div className="mt-6 border border-line bg-paper p-6">
           <LoginForm />
         </div>
-
-        <p className="mt-4 text-center text-[0.75rem] text-ink-3">
-          No admin account yet?{" "}
-          <Link href="/admin/setup" className="link-underline text-ink-2">
-            Set one up
-          </Link>
-        </p>
       </div>
     </div>
   );

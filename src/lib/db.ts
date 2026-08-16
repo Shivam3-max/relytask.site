@@ -525,12 +525,3 @@ export async function countAdminUsers(): Promise<number> {
   const res = await execute<{ n: number }>("SELECT COUNT(*) AS n FROM AdminUser");
   return Number(res.rows[0].n);
 }
-
-export async function createAdminUser(email: string, passwordHash: string): Promise<void> {
-  await ready();
-  await execute("INSERT INTO AdminUser (id, email, passwordHash) VALUES (?, ?, ?)", [
-    randomUUID(),
-    email,
-    passwordHash,
-  ]);
-}
