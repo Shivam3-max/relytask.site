@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
-import { prisma } from "@/lib/db";
+import { countCaseStudies, countLeads, countTestimonials, leadSourceCounts, listLeads } from "@/lib/db";
 import { AdminPage, Card, Empty, LinkButton, Pill } from "@/components/admin/ui";
 import { formatMoney } from "@/lib/currency";
 import { getCurrency } from "@/lib/currency";
@@ -14,13 +14,13 @@ export default async function Page() {
 
   const [total, thisWeek, unhandled, recent, bySource, work, testimonials] =
     await Promise.all([
-      prisma.lead.count(),
-      prisma.lead.count({ where: { createdAt: { gte: since(7) } } }),
-      prisma.lead.count({ where: { status: "new" } }),
-      prisma.lead.findMany({ orderBy: { createdAt: "desc" }, take: 8 }),
-      prisma.lead.groupBy({ by: ["source"], _count: { source: true } }),
-      prisma.caseStudy.count(),
-      prisma.testimonial.count(),
+      countLeads(),
+      countLeads({ since: since(7) }),
+      countLeads({ status: "new" }),
+      listLeads({ take: 8 }),
+      leadSourceCounts(),
+      countCaseStudies(),
+      countTestimonials(),
     ]);
 
   const inr = getCurrency("INR");
@@ -104,14 +104,14 @@ export default async function Page() {
             ) : (
               <dl className="flex flex-col">
                 {bySource
-                  .sort((a, b) => b._count.source - a._count.source)
+                  .sort((a, b) => b.count - a.count)
                   .map((s) => (
                     <div
                       key={s.source}
                       className="flex items-center justify-between border-t border-line py-2.5 first:border-t-0 first:pt-0"
                     >
                       <dt className="text-[0.875rem] text-ink-2">{s.source}</dt>
-                      <dd className="t-mono text-ink">{s._count.source}</dd>
+                      <dd className="t-mono text-ink">{s.count}</dd>
                     </div>
                   ))}
               </dl>

@@ -86,9 +86,9 @@ export default function Globe({ className = "" }: { className?: string }) {
       el.style.width = `${w}px`;
       el.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      // The sphere is deliberately larger than the frame — we only ever show
-      // the part of the world that matters, cropped like a porthole.
-      R = Math.min(w, h) * 0.52;
+      // The sphere sits inside the frame with a little breathing room rather
+      // than filling it edge to edge.
+      R = Math.min(w, h) * 0.42;
       cx = w * 0.5;
       cy = h * 0.5;
 

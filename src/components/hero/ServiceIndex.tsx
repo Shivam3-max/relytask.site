@@ -36,7 +36,7 @@ export default function ServiceIndex({ active, activePillar, onHover }: Props) {
                   return (
                     <li key={service.slug}>
                       <Link
-                        href={`${pillar.href}#${service.slug}`}
+                        href={`${pillar.href}/${service.slug}`}
                         onMouseEnter={() => onHover(service.slug, pillar.id)}
                         onMouseLeave={() => onHover(null, pillar.id)}
                         className="block rounded-full border px-2.5 py-1 text-[0.75rem] leading-none transition-all duration-250"

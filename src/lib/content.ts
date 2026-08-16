@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "./db";
+import { listCaseStudies, listTestimonials, type CaseStudyRow } from "./db";
 import { CASE_STUDIES, type CaseStudy } from "./case-studies";
 
 /**
@@ -24,7 +24,7 @@ export type Testimonial = {
 };
 
 /**
- * Kept as a self-contained literal: prisma/seed.mjs reads this array straight
+ * Kept as a self-contained literal: scripts/seed.mjs reads this array straight
  * out of the file, so it must not reference anything defined elsewhere.
  */
 export const FALLBACK_TESTIMONIALS: Testimonial[] = [
@@ -81,9 +81,7 @@ const parse = <T,>(json: string | null, fallback: T): T => {
   }
 };
 
-type Row = Awaited<ReturnType<typeof prisma.caseStudy.findMany>>[number];
-
-function toCaseStudy(row: Row): CaseStudy {
+function toCaseStudy(row: CaseStudyRow): CaseStudy {
   return {
     slug: row.slug,
     client: row.client,
@@ -110,10 +108,7 @@ function toCaseStudy(row: Row): CaseStudy {
 
 export async function getCaseStudies(): Promise<CaseStudy[]> {
   try {
-    const rows = await prisma.caseStudy.findMany({
-      where: { published: true },
-      orderBy: [{ order: "asc" }, { createdAt: "asc" }],
-    });
+    const rows = await listCaseStudies({ publishedOnly: true });
     if (!rows.length) return CASE_STUDIES;
     return rows.map(toCaseStudy);
   } catch {
@@ -128,10 +123,7 @@ export async function getCaseStudyBySlug(slug: string) {
 
 export async function getTestimonials(): Promise<Testimonial[]> {
   try {
-    const rows = await prisma.testimonial.findMany({
-      where: { published: true },
-      orderBy: [{ order: "asc" }, { createdAt: "asc" }],
-    });
+    const rows = await listTestimonials({ publishedOnly: true });
     if (!rows.length) return FALLBACK_TESTIMONIALS;
     return rows.map((r) => ({
       id: r.id,

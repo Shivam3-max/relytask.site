@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/lib/auth";
-import { prisma } from "@/lib/db";
+import { listTestimonials } from "@/lib/db";
 import { deleteTestimonial, saveTestimonial } from "../actions";
 import {
   AdminPage,
@@ -21,9 +21,7 @@ const ASPECTS = ["16/9", "9/16", "1/1", "4/5"];
 
 export default async function Page() {
   await requireAdmin();
-  const rows = await prisma.testimonial.findMany({
-    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
-  });
+  const rows = await listTestimonials();
 
   const withVideo = rows.filter((r) => r.mediaType === "video").length;
 

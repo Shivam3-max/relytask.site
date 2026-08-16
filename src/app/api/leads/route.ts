@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { createLead } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -81,9 +81,7 @@ export async function POST(request: Request) {
   };
 
   try {
-    const lead = await prisma.lead.create({
-      data: { ...data, score: score(data) },
-    });
+    const lead = await createLead({ ...data, score: score(data) });
     return NextResponse.json({ ok: true, id: lead.id });
   } catch {
     return NextResponse.json(

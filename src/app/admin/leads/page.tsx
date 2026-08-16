@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
-import { prisma } from "@/lib/db";
+import { leadSourceCounts, listLeads } from "@/lib/db";
 import { deleteLead, updateLead } from "../actions";
 import { AdminPage, Button, Card, Empty, Pill, inputClass } from "@/components/admin/ui";
 
@@ -18,14 +18,13 @@ export default async function Page({
   await requireAdmin();
   const { status, source } = await searchParams;
 
-  const where = {
-    ...(status && status !== "all" ? { status } : {}),
-    ...(source && source !== "all" ? { source } : {}),
-  };
-
   const [leads, sources] = await Promise.all([
-    prisma.lead.findMany({ where, orderBy: [{ createdAt: "desc" }], take: 200 }),
-    prisma.lead.groupBy({ by: ["source"], _count: { source: true } }),
+    listLeads({
+      status: status && status !== "all" ? status : undefined,
+      source: source && source !== "all" ? source : undefined,
+      take: 200,
+    }),
+    leadSourceCounts(),
   ]);
 
   const filterLink = (next: Partial<Search>) => {

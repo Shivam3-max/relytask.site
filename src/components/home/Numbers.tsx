@@ -95,11 +95,11 @@ export default function Numbers({ stats }: { stats: Stat[] }) {
     <section className="border-y border-line py-16 md:py-24">
       <div
         ref={ref}
-        className="grid grid-cols-2 gap-y-10 md:grid-cols-4"
+        className="grid grid-cols-2 gap-y-10 text-center md:grid-cols-4"
         style={{ paddingInline: "var(--gutter)" }}
       >
         {stats.map((s, i) => (
-          <div key={s.label}>
+          <div key={s.label} className="flex flex-col items-center">
             <p className="t-display text-[clamp(2.25rem,6vw,4rem)] text-ink">
               {s.prefix}
               <span>{(values[i] ?? 0).toFixed(s.decimals ?? 0)}</span>

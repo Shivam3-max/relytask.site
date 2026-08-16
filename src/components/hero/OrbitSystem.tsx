@@ -6,9 +6,9 @@ import { PILLARS } from "@/lib/services";
 import { useMotion } from "@/lib/useMotion";
 
 const RINGS = [
-  { pillar: PILLARS[0], size: 100, speed: 0.014, dir: 1, offset: -90 },
-  { pillar: PILLARS[1], size: 73, speed: -0.019, dir: -1, offset: -50 },
-  { pillar: PILLARS[2], size: 46, speed: 0.026, dir: 1, offset: -120 },
+  { pillar: PILLARS[0], size: 100, speed: 0.028, dir: 1, offset: -90 },
+  { pillar: PILLARS[1], size: 73, speed: -0.038, dir: -1, offset: -50 },
+  { pillar: PILLARS[2], size: 46, speed: 0.052, dir: 1, offset: -120 },
 ];
 
 type Props = {
@@ -90,7 +90,7 @@ export default function OrbitSystem({ active, activePillar, onHover }: Props) {
                 return (
                   <Link
                     key={service.slug}
-                    href={`${ring.pillar.href}#${service.slug}`}
+                    href={`${ring.pillar.href}/${service.slug}`}
                     aria-label={service.name}
                     onMouseEnter={() => onHover(service.slug, ring.pillar.id)}
                     onMouseLeave={() => onHover(null, null)}

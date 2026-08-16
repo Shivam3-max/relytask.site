@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "./db";
+import { deleteSetting, getSetting, upsertSetting } from "./db";
 import { DEFAULT_RATE_CARD, type RateCard } from "./pricing";
 import { AUTOMATION, OUTREACH, PAID } from "./benchmarks";
 import { CURRENCIES, type CurrencyCode } from "./currency";
@@ -78,9 +78,9 @@ export const KEYS = {
 
 async function read<T>(key: string, fallback: T): Promise<T> {
   try {
-    const row = await prisma.setting.findUnique({ where: { key } });
-    if (!row) return fallback;
-    return JSON.parse(row.value) as T;
+    const value = await getSetting(key);
+    if (value == null) return fallback;
+    return JSON.parse(value) as T;
   } catch {
     // A missing table or bad JSON must never take the public site down.
     return fallback;
@@ -88,12 +88,7 @@ async function read<T>(key: string, fallback: T): Promise<T> {
 }
 
 export async function write(key: string, value: unknown) {
-  const json = JSON.stringify(value);
-  await prisma.setting.upsert({
-    where: { key },
-    create: { key, value: json },
-    update: { value: json },
-  });
+  await upsertSetting(key, JSON.stringify(value));
 }
 
 export const getRateCard = () => read<RateCard>(KEYS.rateCard, DEFAULT_RATE_CARD);
@@ -102,5 +97,5 @@ export const getStats = () => read<SiteStats>(KEYS.stats, DEFAULT_STATS);
 export const getFx = () => read<Record<CurrencyCode, number>>(KEYS.fx, DEFAULT_FX);
 
 export async function resetSetting(key: string) {
-  await prisma.setting.deleteMany({ where: { key } });
+  await deleteSetting(key);
 }

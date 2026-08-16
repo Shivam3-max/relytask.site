@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CASE_STUDIES } from "@/lib/case-studies";
@@ -12,7 +12,7 @@ export default function WorkStrip() {
   const track = useRef<HTMLDivElement>(null);
   const featured = CASE_STUDIES.filter((c) => c.featured);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const w = wrap.current;
     const t = track.current;
     if (!w || !t) return;

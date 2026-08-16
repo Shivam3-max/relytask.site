@@ -3,7 +3,17 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { adminConfigError, checkPassword, clearSession, isAuthed, setSession } from "@/lib/auth";
-import { prisma } from "@/lib/db";
+import {
+  createCaseStudy,
+  createTestimonial,
+  deleteCaseStudy as removeCaseStudy,
+  deleteLead as removeLead,
+  deleteTestimonial as removeTestimonial,
+  getCaseStudyById,
+  updateCaseStudy,
+  updateLead as saveLeadUpdate,
+  updateTestimonial,
+} from "@/lib/db";
 import { KEYS, resetSetting, write } from "@/lib/settings";
 import type { RateCard } from "@/lib/pricing";
 import type { BenchmarkSettings, SiteStats } from "@/lib/settings";
@@ -58,19 +68,16 @@ export async function logout() {
 export async function updateLead(formData: FormData) {
   await guard();
   const id = str(formData.get("id"), 60);
-  await prisma.lead.update({
-    where: { id },
-    data: {
-      status: str(formData.get("status"), 20) || "new",
-      notes: str(formData.get("notes"), 5000) || null,
-    },
+  await saveLeadUpdate(id, {
+    status: str(formData.get("status"), 20) || "new",
+    notes: str(formData.get("notes"), 5000) || null,
   });
   revalidatePath("/admin/leads");
 }
 
 export async function deleteLead(formData: FormData) {
   await guard();
-  await prisma.lead.delete({ where: { id: str(formData.get("id"), 60) } });
+  await removeLead(str(formData.get("id"), 60));
   revalidatePath("/admin/leads");
 }
 
@@ -105,12 +112,10 @@ export async function saveCaseStudy(formData: FormData) {
     published: formData.get("published") === "on",
   };
 
-  const previous = id
-    ? await prisma.caseStudy.findUnique({ where: { id }, select: { slug: true } })
-    : null;
+  const previous = id ? await getCaseStudyById(id) : null;
 
-  if (id) await prisma.caseStudy.update({ where: { id }, data });
-  else await prisma.caseStudy.create({ data });
+  if (id) await updateCaseStudy(id, data);
+  else await createCaseStudy(data);
 
   revalidatePath("/admin/work");
   revalidatePath("/it-projects");
@@ -125,12 +130,10 @@ export async function saveCaseStudy(formData: FormData) {
 
 export async function deleteCaseStudy(formData: FormData) {
   await guard();
-  const removed = await prisma.caseStudy.delete({
-    where: { id: str(formData.get("id"), 60) },
-  });
+  const removed = await removeCaseStudy(str(formData.get("id"), 60));
   revalidatePath("/admin/work");
   revalidatePath("/it-projects");
-  revalidatePath(`/it-projects/${removed.slug}`);
+  if (removed) revalidatePath(`/it-projects/${removed.slug}`);
   revalidatePath("/sitemap.xml");
 }
 
@@ -153,8 +156,8 @@ export async function saveTestimonial(formData: FormData) {
     published: formData.get("published") === "on",
   };
 
-  if (id) await prisma.testimonial.update({ where: { id }, data });
-  else await prisma.testimonial.create({ data });
+  if (id) await updateTestimonial(id, data);
+  else await createTestimonial(data);
 
   revalidatePath("/admin/testimonials");
   revalidatePath("/");
@@ -163,7 +166,7 @@ export async function saveTestimonial(formData: FormData) {
 
 export async function deleteTestimonial(formData: FormData) {
   await guard();
-  await prisma.testimonial.delete({ where: { id: str(formData.get("id"), 60) } });
+  await removeTestimonial(str(formData.get("id"), 60));
   revalidatePath("/admin/testimonials");
   revalidatePath("/");
   revalidatePath("/testimonials");

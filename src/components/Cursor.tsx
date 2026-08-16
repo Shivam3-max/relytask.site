@@ -1,18 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+
+const noSubscription = () => () => {};
+
+function computeEnabled() {
+  const fine = window.matchMedia("(pointer: fine)").matches;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return fine && !reduced;
+}
+
+const serverSnapshot = () => false;
 
 export default function Cursor() {
   const dot = useRef<HTMLDivElement>(null);
   const ring = useRef<HTMLDivElement>(null);
-  const [enabled, setEnabled] = useState(false);
+  // useSyncExternalStore rather than an effect + setState: correct on the
+  // first client render with no extra re-render, `false` during SSR so
+  // there is no hydration mismatch.
+  const enabled = useSyncExternalStore(noSubscription, computeEnabled, serverSnapshot);
   const [label, setLabel] = useState("");
 
   useEffect(() => {
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!fine || reduced) return;
-    setEnabled(true);
+    if (!enabled) return;
 
     let x = window.innerWidth / 2;
     let y = window.innerHeight / 2;
@@ -42,7 +52,7 @@ export default function Cursor() {
       window.removeEventListener("pointermove", move);
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [enabled]);
 
   if (!enabled) return null;
 

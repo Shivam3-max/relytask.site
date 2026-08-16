@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
-import { prisma } from "@/lib/db";
+import { listCaseStudies } from "@/lib/db";
 import { deleteCaseStudy } from "../actions";
 import { AdminPage, Button, Card, Empty, LinkButton, Pill } from "@/components/admin/ui";
 import { CASE_STUDIES } from "@/lib/case-studies";
@@ -9,9 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Page() {
   await requireAdmin();
-  const rows = await prisma.caseStudy.findMany({
-    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
-  });
+  const rows = await listCaseStudies();
 
   return (
     <AdminPage

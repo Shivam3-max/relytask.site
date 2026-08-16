@@ -73,7 +73,7 @@ export default function Reach() {
         {/* ── Globe ────────────────────────────────────────────── */}
         <div className="relative">
           <div className="relative aspect-square w-full overflow-hidden md:-mr-[var(--gutter)] md:aspect-[4/5]">
-            <div className="absolute inset-y-0 -left-[8%] w-[116%] md:-left-[14%] md:w-[142%]">
+            <div className="absolute inset-0">
               <Globe className="h-full w-full" />
             </div>
           </div>
