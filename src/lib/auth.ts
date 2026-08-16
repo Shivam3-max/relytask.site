@@ -2,10 +2,15 @@ import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { countAdminUsers, getAdminByEmail } from "./db";
+import { verifyPassword } from "./password";
 
 /**
- * Single-password admin gate. Deliberately small: one operator, one shared
- * secret, a signed httpOnly cookie. No user table, nothing to leak.
+ * Admin gate: email + password checked against the AdminUser table, a
+ * signed httpOnly session cookie on top. The first account is created at
+ * /admin/setup (gated by ADMIN_SECRET, only while the table is empty) —
+ * for hosts with shell access, `npm run seed:admin` also works. No signup
+ * flow beyond that, and no env-var shared password.
  */
 
 const COOKIE = "relytask_admin";
@@ -28,17 +33,12 @@ function secret() {
 }
 
 /**
- * What is stopping the admin panel from working, if anything. Returned to the
- * login screen so a missing environment variable does not masquerade as a
- * wrong password — which is exactly what it looked like on first deploy.
+ * Whether ADMIN_SECRET itself is missing or unusable — checked on its own
+ * (no DB round trip) because /admin/setup needs this answer before it can
+ * even ask whether an admin account exists yet.
  */
-export function adminConfigError(): string | null {
-  const password = process.env.ADMIN_PASSWORD;
+export function secretConfigError(): string | null {
   const configuredSecret = process.env.ADMIN_SECRET;
-
-  if (!password) {
-    return "ADMIN_PASSWORD is not set on this server, so there is no password to match. Add it to your environment variables and redeploy.";
-  }
   if (!configuredSecret) {
     return process.env.NODE_ENV === "production"
       ? "ADMIN_SECRET is not set on this server. Generate one with `openssl rand -hex 32`, add it to your environment variables and redeploy."
@@ -46,6 +46,21 @@ export function adminConfigError(): string | null {
   }
   if (configuredSecret.length < 16) {
     return "ADMIN_SECRET is too short — it needs at least 16 characters.";
+  }
+  return null;
+}
+
+/**
+ * What is stopping the admin panel from working, if anything. Returned to the
+ * login screen so a missing environment variable or an empty AdminUser table
+ * does not masquerade as a wrong password — which is exactly what it looked
+ * like on first deploy.
+ */
+export async function adminConfigError(): Promise<string | null> {
+  const secretError = secretConfigError();
+  if (secretError) return secretError;
+  if ((await countAdminUsers()) === 0) {
+    return "No admin account exists yet. Create one at /admin/setup.";
   }
   return null;
 }
@@ -61,11 +76,22 @@ function safeEqual(a: string, b: string) {
   return timingSafeEqual(ab, bb);
 }
 
-/** Verify a submitted password against ADMIN_PASSWORD. */
-export function checkPassword(input: string) {
-  const expected = process.env.ADMIN_PASSWORD;
-  if (!expected) return false;
-  return safeEqual(input, expected);
+/** Verify a submitted email/password pair against the AdminUser table. */
+export async function verifyCredentials(email: string, password: string) {
+  const user = await getAdminByEmail(email.trim().toLowerCase());
+  if (!user) return false;
+  return verifyPassword(password, user.passwordHash);
+}
+
+/**
+ * Gate for /admin/setup: proves the caller can read this server's
+ * environment variables (i.e. is the operator), not just its URL.
+ * Reuses ADMIN_SECRET rather than adding a second secret to configure.
+ */
+export function verifySetupToken(token: string) {
+  const configured = process.env.ADMIN_SECRET;
+  if (!configured || configured.length < 16) return false;
+  return safeEqual(token, configured);
 }
 
 export function makeToken() {

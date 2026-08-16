@@ -2,8 +2,19 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { adminConfigError, checkPassword, clearSession, isAuthed, setSession } from "@/lib/auth";
 import {
+  adminConfigError,
+  clearSession,
+  isAuthed,
+  secretConfigError,
+  setSession,
+  verifyCredentials,
+  verifySetupToken,
+} from "@/lib/auth";
+import { hashPassword } from "@/lib/password";
+import {
+  countAdminUsers,
+  createAdminUser,
   createCaseStudy,
   createTestimonial,
   deleteCaseStudy as removeCaseStudy,
@@ -48,12 +59,15 @@ const pairs = (v: FormDataEntryValue | null, aKey: string, bKey: string) =>
 /* ── Auth ─────────────────────────────────────────────────────── */
 
 export async function login(_prev: { error?: string } | undefined, formData: FormData) {
-  const misconfigured = adminConfigError();
+  const misconfigured = await adminConfigError();
   if (misconfigured) return { error: misconfigured };
 
+  const email = str(formData.get("email"), 320);
   const password = str(formData.get("password"), 200);
-  if (!password) return { error: "Enter the password." };
-  if (!checkPassword(password)) return { error: "That password is not right." };
+  if (!email || !password) return { error: "Enter your email and password." };
+  if (!(await verifyCredentials(email, password))) {
+    return { error: "That email or password is not right." };
+  }
   await setSession();
   redirect("/admin");
 }
@@ -61,6 +75,36 @@ export async function login(_prev: { error?: string } | undefined, formData: For
 export async function logout() {
   await clearSession();
   redirect("/admin/login");
+}
+
+/**
+ * One-time setup: creates the first admin account. Gated by ADMIN_SECRET
+ * (so only the operator can use it) and by the AdminUser table being empty
+ * (so it stops working the moment an account exists) — exists because
+ * shell-less hosts can't run `npm run seed:admin`.
+ */
+export async function setupAdmin(_prev: { error?: string } | undefined, formData: FormData) {
+  const misconfigured = secretConfigError();
+  if (misconfigured) return { error: misconfigured };
+
+  if ((await countAdminUsers()) > 0) {
+    return { error: "An admin account already exists — use /admin/login instead." };
+  }
+
+  const token = str(formData.get("token"), 200);
+  if (!verifySetupToken(token)) return { error: "That setup token is not right." };
+
+  const email = str(formData.get("email"), 320).toLowerCase();
+  const password = str(formData.get("password"), 200);
+  const confirmPassword = str(formData.get("confirmPassword"), 200);
+
+  if (!email || !password) return { error: "Enter an email and password." };
+  if (password.length < 8) return { error: "Password must be at least 8 characters." };
+  if (password !== confirmPassword) return { error: "Passwords do not match." };
+
+  await createAdminUser(email, hashPassword(password));
+  await setSession();
+  redirect("/admin");
 }
 
 /* ── Leads ────────────────────────────────────────────────────── */

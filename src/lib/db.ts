@@ -146,6 +146,14 @@ async function doInit(): Promise<void> {
         updatedAt DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS AdminUser (
+        id VARCHAR(191) PRIMARY KEY,
+        email VARCHAR(320) NOT NULL UNIQUE,
+        passwordHash VARCHAR(191) NOT NULL,
+        createdAt DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `);
   } finally {
     conn.release();
   }
@@ -495,4 +503,34 @@ export async function upsertSetting(key: string, value: string): Promise<void> {
 export async function deleteSetting(key: string): Promise<void> {
   await ready();
   await execute("DELETE FROM Setting WHERE `key` = ?", [key]);
+}
+
+/* ---------- admin users ---------- */
+
+export interface AdminUserRow {
+  id: string;
+  email: string;
+  passwordHash: string;
+  createdAt: Date;
+}
+
+export async function getAdminByEmail(email: string): Promise<AdminUserRow | null> {
+  await ready();
+  const res = await execute<AdminUserRow>("SELECT * FROM AdminUser WHERE email = ?", [email]);
+  return res.rows[0] ?? null;
+}
+
+export async function countAdminUsers(): Promise<number> {
+  await ready();
+  const res = await execute<{ n: number }>("SELECT COUNT(*) AS n FROM AdminUser");
+  return Number(res.rows[0].n);
+}
+
+export async function createAdminUser(email: string, passwordHash: string): Promise<void> {
+  await ready();
+  await execute("INSERT INTO AdminUser (id, email, passwordHash) VALUES (?, ?, ?)", [
+    randomUUID(),
+    email,
+    passwordHash,
+  ]);
 }
