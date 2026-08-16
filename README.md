@@ -55,18 +55,52 @@ serverless platforms.
 Deploy, then optionally run `DATABASE_URL="<production url>" npm run seed`
 once to load the built-in projects and testimonials.
 
-### Hostinger (shared/Node hosting)
+### Hostinger (shared/Business hosting, Node.js App)
 
-1. Create a MySQL database in hPanel → Databases. Hostinger prefixes
-   database/user names, e.g. `u123456789_relytask`.
-2. Set `DATABASE_HOST`/`DATABASE_USER`/`DATABASE_PASSWORD`/`DATABASE_NAME`
-   from hPanel → Databases → Management. `DATABASE_HOST` is usually
-   `localhost` when the app and database share the same server.
-3. Set `ADMIN_PASSWORD` and `ADMIN_SECRET`.
-4. Deploy and start with `npm run build && npm start`. Tables are created
-   automatically on first request.
-5. Leave `BLOB_READ_WRITE_TOKEN` unset — Hostinger's filesystem is writable,
-   so uploads go to `public/uploads`.
+Hostinger's Node.js App Manager runs on Phusion Passenger, which expects a
+plain JS **startup file** that listens on the port it assigns via
+`process.env.PORT` — `next start` doesn't read that on its own, so the repo
+includes `server.js` for exactly this.
+
+1. **Database.** hPanel → **Databases → MySQL Databases** → create a database
+   and user (Hostinger prefixes both, e.g. `u123456789_relytask` /
+   `u123456789_dbuser`) and attach the user to the database. Note the host it
+   shows you — usually `localhost`.
+2. **Get the code onto the server.** Either:
+   - hPanel → **Advanced → SSH Access** (included on Business plans) and
+     `git clone` the repo, or `scp`/upload a zip and extract it, or
+   - hPanel's Node.js screen has a Git/file-manager based deploy — either
+     way, land the repo in the application root folder you pick below.
+3. **Create the app.** hPanel → **Advanced → Node.js** → **Create
+   Application**:
+   - Node.js version: 20 or newer
+   - Application root: the folder you deployed into
+   - Application URL: the domain/subdomain for the site
+   - Application startup file: `server.js`
+4. **Install and build.** If you have SSH, `cd` into the app folder and run:
+   ```bash
+   npm install
+   npm run build
+   ```
+   (Hostinger's Node.js screen also has an "NPM Install" button and often a
+   way to run a custom command — use that if SSH isn't available. Either
+   way, `npm run build` must complete before the app is started; there is no
+   build step baked into `server.js` itself.)
+5. **Environment variables.** On the Node.js app's config screen, add:
+   `DATABASE_HOST`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME`
+   (from step 1), `ADMIN_PASSWORD`, and `ADMIN_SECRET` (`openssl rand -hex
+   32`, or generate one any other way — it just needs to be random and
+   16+ characters). Leave `BLOB_READ_WRITE_TOKEN` unset.
+6. **Start/restart the app** from the Node.js screen. Tables are created
+   automatically on first request — no separate migration step. Optionally
+   run `npm run seed` once (over SSH) to load the six built-in projects and
+   three testimonials into the database so they show up in the admin panel.
+7. Uploads go to `public/uploads` and persist normally — Hostinger's
+   filesystem is writable and not wiped between requests, unlike Vercel.
+
+To redeploy after a code change: pull the new code, `npm install` (if
+dependencies changed), `npm run build`, then restart the app from the
+Node.js screen.
 
 ### Vercel + a remote MySQL (Hostinger, PlanetScale, RDS...)
 
