@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import PlaceholderArt from "@/components/PlaceholderArt";
 import { PILLARS, PROCESS } from "@/lib/services";
 import { DESTINATIONS } from "@/lib/globe";
 import { SITE, whatsappHref } from "@/lib/site";
@@ -86,7 +86,16 @@ export default function Page() {
 
         <div className="mt-8 grid gap-10 md:grid-cols-[0.85fr_1.15fr] md:gap-16">
           <Reveal>
-            <PlaceholderArt seed={21} ratio="aspect-[4/5]" label="Shivam Bhandari" />
+            <div className="relative aspect-[4/5] overflow-hidden bg-paper-2">
+              <Image
+                src="/Founder.jpeg"
+                alt="Shivam Bhandari, founder of RelyTask"
+                fill
+                sizes="(min-width: 768px) 40vw, 90vw"
+                className="object-cover"
+                priority
+              />
+            </div>
             <div className="mt-5 flex flex-wrap gap-x-8 gap-y-3">
               {[
                 { k: "Started at", v: "15" },
