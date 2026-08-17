@@ -3,7 +3,6 @@ import { requireAdmin } from "@/lib/auth";
 import { listCaseStudies } from "@/lib/db";
 import { deleteCaseStudy } from "../actions";
 import { AdminPage, Button, Card, Empty, LinkButton, Pill } from "@/components/admin/ui";
-import { CASE_STUDIES } from "@/lib/case-studies";
 
 export const dynamic = "force-dynamic";
 
@@ -14,23 +13,11 @@ export default async function Page() {
   return (
     <AdminPage
       title="IT Projects"
-      sub="Projects shown on /it-projects. While none are saved here the site falls back to the six written into the code, so the page is never empty."
+      sub="Projects shown on /it-projects."
       action={<LinkButton href="/admin/work/new" variant="primary">Add a project</LinkButton>}
     >
       {rows.length === 0 ? (
-        <>
-          <Empty>
-            Nothing saved yet — /it-projects is currently serving the {CASE_STUDIES.length} built-in
-            projects.
-          </Empty>
-          <Card title="Import the built-in ones" className="mt-6">
-            <p className="text-[0.875rem] leading-relaxed text-ink-3">
-              Run <code className="bg-paper-2 px-1.5 py-0.5">npm run seed</code> once to copy the
-              six existing case studies and three testimonials into the database. After that
-              you can edit them here.
-            </p>
-          </Card>
-        </>
+        <Empty>Nothing added yet — add your first project to populate /it-projects.</Empty>
       ) : (
         <div className="flex flex-col gap-3">
           {rows.map((c) => (

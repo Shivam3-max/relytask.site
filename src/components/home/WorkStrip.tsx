@@ -4,13 +4,12 @@ import Link from "next/link";
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { CASE_STUDIES } from "@/lib/case-studies";
-import PlaceholderArt from "../PlaceholderArt";
+import type { CaseStudy } from "@/lib/case-studies";
+import ProjectImage from "../ProjectImage";
 
-export default function WorkStrip() {
+export default function WorkStrip({ featured }: { featured: CaseStudy[] }) {
   const wrap = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
-  const featured = CASE_STUDIES.filter((c) => c.featured);
 
   useLayoutEffect(() => {
     const w = wrap.current;
@@ -38,6 +37,8 @@ export default function WorkStrip() {
     }, w);
     return () => ctx.revert();
   }, []);
+
+  if (!featured.length) return null;
 
   return (
     <section ref={wrap} className="overflow-hidden py-16 lg:h-[100svh] lg:py-0">
@@ -69,7 +70,7 @@ export default function WorkStrip() {
             className="group w-[78vw] shrink-0 sm:w-[52vw] lg:w-[30rem]"
           >
             <div className="relative overflow-hidden">
-              <PlaceholderArt seed={cs.seed} ratio="aspect-[4/3]" />
+              <ProjectImage src={cs.imageUrl} seed={cs.seed} ratio="aspect-[4/3]" />
               <div className="absolute inset-0 bg-ink opacity-0 transition-opacity duration-500 group-hover:opacity-[0.06]" />
               {cs.confidential && (
                 <span className="t-mono absolute right-3 top-3 bg-paper/90 px-2 py-1 text-[0.5rem] text-ink-3">
@@ -87,9 +88,11 @@ export default function WorkStrip() {
                   {cs.title}
                 </p>
               </div>
-              <span className="t-display shrink-0 text-[1.5rem] text-ink">
-                {cs.metrics[0].value}
-              </span>
+              {cs.metrics[0] && (
+                <span className="t-display shrink-0 text-[1.5rem] text-ink">
+                  {cs.metrics[0].value}
+                </span>
+              )}
             </div>
           </Link>
         ))}

@@ -13,7 +13,6 @@ import {
   inputClass,
 } from "@/components/admin/ui";
 import MediaUpload from "@/components/admin/MediaUpload";
-import { FALLBACK_TESTIMONIALS } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
@@ -96,10 +95,7 @@ export default async function Page() {
       {/* ── Existing ────────────────────────────────────────── */}
       <div className="mt-8 flex flex-col gap-4">
         {rows.length === 0 ? (
-          <Empty>
-            Nothing saved yet — the site is showing the {FALLBACK_TESTIMONIALS.length} built-in
-            quotes.
-          </Empty>
+          <Empty>Nothing added yet — add your first testimonial above.</Empty>
         ) : (
           rows.map((t) => (
             <Card key={t.id}>

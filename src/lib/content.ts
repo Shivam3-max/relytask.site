@@ -4,9 +4,9 @@ import { CASE_STUDIES, type CaseStudy } from "./case-studies";
 
 /**
  * Case studies and testimonials come from the database so they can be added
- * from the admin panel. The files in lib/ stay as the seed and as a fallback,
- * so an empty or unreachable database shows the original content rather than
- * an empty page.
+ * from the admin panel. The arrays in lib/ are intentionally empty — they
+ * exist only as a typed fallback for when the database is unreachable, not
+ * as preinstalled content.
  */
 
 export type Testimonial = {
@@ -24,53 +24,12 @@ export type Testimonial = {
 };
 
 /**
- * Kept as a self-contained literal: scripts/seed.mjs reads this array straight
- * out of the file, so it must not reference anything defined elsewhere.
+ * Intentionally empty — testimonials are added from the admin panel and
+ * stored in the database. Kept as a self-contained literal because
+ * scripts/seed.mjs reads this array straight out of the file, so it must not
+ * reference anything defined elsewhere.
  */
-export const FALLBACK_TESTIMONIALS: Testimonial[] = [
-  {
-    id: "seed-1",
-    quote:
-      "We'd been through two agencies. RelyTask was the first that asked to see our sales process before touching the ad account.",
-    name: "Founder",
-    role: "D2C wellness brand",
-    company: null,
-    mediaUrl: null,
-    mediaType: null,
-    posterUrl: null,
-    aspect: "16/9",
-    featured: false,
-    order: 0,
-  },
-  {
-    id: "seed-2",
-    quote:
-      "Thirty-one meetings with plant heads in ninety days, in a market where our ads had never worked. That changed the year.",
-    name: "Director",
-    role: "Industrial equipment",
-    company: null,
-    mediaUrl: null,
-    mediaType: null,
-    posterUrl: null,
-    aspect: "16/9",
-    featured: false,
-    order: 1,
-  },
-  {
-    id: "seed-3",
-    quote:
-      "They built the ERP and then ran the campaigns on top of it. One team, one number to call.",
-    name: "Operations Head",
-    role: "Manufacturing",
-    company: null,
-    mediaUrl: null,
-    mediaType: null,
-    posterUrl: null,
-    aspect: "16/9",
-    featured: false,
-    order: 2,
-  },
-];
+export const FALLBACK_TESTIMONIALS: Testimonial[] = [];
 
 const parse = <T,>(json: string | null, fallback: T): T => {
   if (!json) return fallback;
@@ -101,6 +60,7 @@ function toCaseStudy(row: CaseStudyRow): CaseStudy {
       ? { quote: row.quoteText, name: row.quoteName ?? "", role: row.quoteRole ?? "" }
       : undefined,
     seed: row.seed,
+    imageUrl: row.imageUrl ?? undefined,
     confidential: row.confidential,
     featured: row.featured,
   };

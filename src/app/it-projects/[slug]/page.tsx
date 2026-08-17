@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Reveal from "@/components/Reveal";
-import PlaceholderArt from "@/components/PlaceholderArt";
+import ProjectImage from "@/components/ProjectImage";
 import { CASE_STUDIES } from "@/lib/case-studies";
 import { getCaseStudies, getCaseStudyBySlug } from "@/lib/content";
 import { SITE, whatsappHref } from "@/lib/site";
@@ -69,7 +69,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         </Reveal>
 
         <Reveal className="mt-10">
-          <PlaceholderArt seed={c.seed} ratio="aspect-[21/9]" label={c.client} />
+          <ProjectImage src={c.imageUrl} seed={c.seed} ratio="aspect-[21/9]" label={c.client} />
         </Reveal>
 
         <Reveal className="mt-10 grid gap-8 border-t border-line pt-8 md:grid-cols-4">

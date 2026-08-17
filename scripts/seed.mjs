@@ -65,7 +65,7 @@ async function ensureSchema(db) {
       summary VARCHAR(800) NOT NULL, challenge MEDIUMTEXT NOT NULL, services MEDIUMTEXT NOT NULL,
       stack MEDIUMTEXT, approach MEDIUMTEXT NOT NULL, metrics MEDIUMTEXT NOT NULL,
       quoteText VARCHAR(1000), quoteName VARCHAR(191), quoteRole VARCHAR(191),
-      seed INT NOT NULL DEFAULT 1, confidential TINYINT(1) NOT NULL DEFAULT 0,
+      seed INT NOT NULL DEFAULT 1, imageUrl VARCHAR(500), confidential TINYINT(1) NOT NULL DEFAULT 0,
       featured TINYINT(1) NOT NULL DEFAULT 0, published TINYINT(1) NOT NULL DEFAULT 1,
       \`order\` INT NOT NULL DEFAULT 0,
       createdAt DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -95,14 +95,14 @@ async function main() {
     if (existing.length) continue;
     await db.query(
       `INSERT INTO CaseStudy
-        (id, slug, client, title, category, industry, year, timeline, liveUrl, summary, challenge, services, stack, approach, metrics, quoteText, quoteName, quoteRole, seed, confidential, featured, published, \`order\`)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        (id, slug, client, title, category, industry, year, timeline, liveUrl, summary, challenge, services, stack, approach, metrics, quoteText, quoteName, quoteRole, seed, imageUrl, confidential, featured, published, \`order\`)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [
         randomUUID(), c.slug, c.client, c.title, c.category, c.industry, c.year, c.timeline,
         c.liveUrl ?? null, c.summary, c.challenge, JSON.stringify(c.services ?? []),
         JSON.stringify(c.stack ?? []), JSON.stringify(c.approach ?? []), JSON.stringify(c.metrics ?? []),
         c.testimonial?.quote ?? null, c.testimonial?.name ?? null, c.testimonial?.role ?? null,
-        c.seed ?? 1, c.confidential ? 1 : 0, c.featured ? 1 : 0, 1, index,
+        c.seed ?? 1, c.imageUrl ?? null, c.confidential ? 1 : 0, c.featured ? 1 : 0, 1, index,
       ],
     );
     added++;

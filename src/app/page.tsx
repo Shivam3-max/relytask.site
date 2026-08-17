@@ -10,18 +10,21 @@ import ToolsTeaser from "@/components/home/ToolsTeaser";
 import Testimonials from "@/components/home/Testimonials";
 
 import { getStats } from "@/lib/settings";
+import { getCaseStudies } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const stats = await getStats();
+  const caseStudies = await getCaseStudies();
+  const featured = caseStudies.filter((c) => c.featured);
   return (
     <>
       <Hero />
       <ScrollClaim />
       <Reach />
       <Pillars />
-      <WorkStrip />
+      <WorkStrip featured={featured} />
       <Numbers stats={stats} />
       <OutreachSpotlight />
       <Process />

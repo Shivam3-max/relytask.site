@@ -109,6 +109,7 @@ export async function saveCaseStudy(formData: FormData) {
     quoteName: str(formData.get("quoteName"), 120) || null,
     quoteRole: str(formData.get("quoteRole"), 120) || null,
     seed: num(formData.get("seed"), 1),
+    imageUrl: str(formData.get("imageUrl"), 500) || null,
     order: num(formData.get("order"), 0),
     confidential: formData.get("confidential") === "on",
     featured: formData.get("featured") === "on",

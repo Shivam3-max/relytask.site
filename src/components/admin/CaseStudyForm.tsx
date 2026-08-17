@@ -1,5 +1,6 @@
 import { saveCaseStudy } from "@/app/admin/actions";
 import { AdminPage, Area, Button, Card, Check, LinkButton, Text, inputClass } from "./ui";
+import MediaUpload from "./MediaUpload";
 
 type Row = {
   id: string;
@@ -21,6 +22,7 @@ type Row = {
   quoteName: string | null;
   quoteRole: string | null;
   seed: number;
+  imageUrl: string | null;
   order: number;
   confidential: boolean;
   featured: boolean;
@@ -61,6 +63,18 @@ export default function CaseStudyForm({ row }: { row?: Row }) {
     >
       <form action={saveCaseStudy} className="flex flex-col gap-6">
         {editing && <input type="hidden" name="id" value={row!.id} />}
+
+        <Card title="Cover image" note="Shown on the work index and at the top of the case page.">
+          <MediaUpload
+            name="imageUrl"
+            typeName="imageKind"
+            label="Project image"
+            hint="A real screenshot or photo. Without one, generated placeholder art is shown instead."
+            defaultUrl={row?.imageUrl}
+            defaultType="image"
+            accept="image/jpeg,image/png,image/webp"
+          />
+        </Card>
 
         <Card title="The basics">
           <div className="grid gap-4 md:grid-cols-2">
@@ -109,8 +123,8 @@ export default function CaseStudyForm({ row }: { row?: Row }) {
             />
             <Text
               name="seed"
-              label="Artwork seed"
-              hint="Any number. Changes the generated placeholder art."
+              label="Placeholder art seed"
+              hint="Only used if no cover image is uploaded above. Any number changes the generated art."
               type="number"
               defaultValue={row?.seed ?? 7}
             />

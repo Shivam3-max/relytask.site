@@ -114,6 +114,7 @@ async function doInit(): Promise<void> {
         quoteName VARCHAR(191),
         quoteRole VARCHAR(191),
         seed INT NOT NULL DEFAULT 1,
+        imageUrl VARCHAR(500),
         confidential TINYINT(1) NOT NULL DEFAULT 0,
         featured TINYINT(1) NOT NULL DEFAULT 0,
         published TINYINT(1) NOT NULL DEFAULT 1,
@@ -122,6 +123,14 @@ async function doInit(): Promise<void> {
         updatedAt DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
+    // Added after the initial CaseStudy table shipped — CREATE TABLE IF NOT
+    // EXISTS above won't add it to a table that already exists, so patch it
+    // in for anyone upgrading from before uploaded cover images existed.
+    try {
+      await conn.query(`ALTER TABLE CaseStudy ADD COLUMN imageUrl VARCHAR(500) AFTER seed`);
+    } catch (e) {
+      if ((e as { code?: string }).code !== "ER_DUP_FIELDNAME") throw e;
+    }
     await conn.query(`
       CREATE TABLE IF NOT EXISTS Testimonial (
         id VARCHAR(191) PRIMARY KEY,
@@ -290,6 +299,7 @@ interface RawCaseStudyRow {
   quoteName: string | null;
   quoteRole: string | null;
   seed: number;
+  imageUrl: string | null;
   confidential: number;
   featured: number;
   published: number;
@@ -327,6 +337,7 @@ export interface CaseStudyInput {
   quoteName: string | null;
   quoteRole: string | null;
   seed: number;
+  imageUrl: string | null;
   order: number;
   confidential: boolean;
   featured: boolean;
@@ -359,13 +370,13 @@ export async function createCaseStudy(input: CaseStudyInput): Promise<void> {
   const id = randomUUID();
   await execute(
     `INSERT INTO CaseStudy
-      (id, slug, client, title, category, industry, year, timeline, liveUrl, summary, challenge, services, stack, approach, metrics, quoteText, quoteName, quoteRole, seed, confidential, featured, published, \`order\`)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      (id, slug, client, title, category, industry, year, timeline, liveUrl, summary, challenge, services, stack, approach, metrics, quoteText, quoteName, quoteRole, seed, imageUrl, confidential, featured, published, \`order\`)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
       id, input.slug, input.client, input.title, input.category, input.industry, input.year,
       input.timeline, input.liveUrl, input.summary, input.challenge, input.services, input.stack,
       input.approach, input.metrics, input.quoteText, input.quoteName, input.quoteRole, input.seed,
-      input.confidential ? 1 : 0, input.featured ? 1 : 0, input.published ? 1 : 0, input.order,
+      input.imageUrl, input.confidential ? 1 : 0, input.featured ? 1 : 0, input.published ? 1 : 0, input.order,
     ],
   );
 }
@@ -375,13 +386,13 @@ export async function updateCaseStudy(id: string, input: CaseStudyInput): Promis
   await execute(
     `UPDATE CaseStudy SET
       slug=?, client=?, title=?, category=?, industry=?, year=?, timeline=?, liveUrl=?, summary=?, challenge=?,
-      services=?, stack=?, approach=?, metrics=?, quoteText=?, quoteName=?, quoteRole=?, seed=?,
+      services=?, stack=?, approach=?, metrics=?, quoteText=?, quoteName=?, quoteRole=?, seed=?, imageUrl=?,
       confidential=?, featured=?, published=?, \`order\`=?
      WHERE id=?`,
     [
       input.slug, input.client, input.title, input.category, input.industry, input.year, input.timeline,
       input.liveUrl, input.summary, input.challenge, input.services, input.stack, input.approach, input.metrics,
-      input.quoteText, input.quoteName, input.quoteRole, input.seed,
+      input.quoteText, input.quoteName, input.quoteRole, input.seed, input.imageUrl,
       input.confidential ? 1 : 0, input.featured ? 1 : 0, input.published ? 1 : 0, input.order, id,
     ],
   );
