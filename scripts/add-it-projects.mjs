@@ -103,7 +103,7 @@ const PROJECTS = [
     imageUrl: "/projects/wise369.png",
     order: 2,
     confidential: false,
-    featured: false,
+    featured: true,
     published: true,
   },
   {
@@ -187,7 +187,7 @@ const PROJECTS = [
     imageUrl: "/projects/trend-mein-hai.png",
     order: 5,
     confidential: false,
-    featured: false,
+    featured: true,
     published: true,
   },
   {
@@ -271,7 +271,7 @@ const PROJECTS = [
     imageUrl: "/projects/zen-g.png",
     order: 8,
     confidential: false,
-    featured: false,
+    featured: true,
     published: true,
   },
   {
@@ -299,7 +299,7 @@ const PROJECTS = [
     imageUrl: "/projects/nama-pharma.png",
     order: 9,
     confidential: false,
-    featured: false,
+    featured: true,
     published: true,
   },
 ];
