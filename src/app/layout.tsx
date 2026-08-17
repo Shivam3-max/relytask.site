@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { SITE } from "@/lib/site";
 import SmoothScroll from "@/components/SmoothScroll";
@@ -11,23 +11,29 @@ import Footer from "@/components/Footer";
 import Cursor from "@/components/Cursor";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 
-const archivo = Archivo({
-  subsets: ["latin"],
+// Self-hosted (not next/font/google): builds on hosts without outbound
+// internet access — e.g. Hostinger — where fetching fonts.gstatic.com at
+// build time fails and silently kills the build. Files are variable fonts
+// covering the weight ranges below in one file each, pulled straight from
+// Google's own CDN — see AGENTS.md/README for how to refresh them.
+const archivo = localFont({
+  src: "../fonts/archivo-latin.woff2",
   variable: "--font-archivo",
-  weight: ["600", "700", "800", "900"],
+  weight: "600 900",
   display: "swap",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: "../fonts/inter-latin.woff2",
   variable: "--font-inter",
+  weight: "100 900",
   display: "swap",
 });
 
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
+const mono = localFont({
+  src: "../fonts/jetbrains-mono-latin.woff2",
   variable: "--font-mono-face",
-  weight: ["400", "500"],
+  weight: "400 500",
   display: "swap",
 });
 
