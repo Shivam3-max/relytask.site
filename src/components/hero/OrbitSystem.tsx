@@ -147,8 +147,8 @@ export default function OrbitSystem({ active, activePillar, onHover }: Props) {
       {/* pillar tags */}
       {PILLARS.map((pillar, i) => {
         const pos = [
-          { left: "-2%", top: "4%" },
-          { right: "-4%", top: "44%" },
+          { left: "0%", top: "4%" },
+          { right: "0%", top: "44%" },
           { left: "4%", bottom: "2%" },
         ][i];
         const dim = activePillar !== null && activePillar !== pillar.id;
@@ -159,7 +159,7 @@ export default function OrbitSystem({ active, activePillar, onHover }: Props) {
             data-cursor="View"
             onMouseEnter={() => onHover(null, pillar.id)}
             onMouseLeave={() => onHover(null, null)}
-            className="absolute z-10 hidden border-l-2 bg-paper/85 py-1.5 pl-2.5 pr-4 backdrop-blur-sm transition-all duration-400 lg:block"
+            className="absolute z-10 block border-l-2 bg-paper/85 py-1 pl-1.5 pr-2.5 backdrop-blur-sm transition-all duration-400 md:py-1.5 md:pl-2.5 md:pr-4"
             style={{
               ...pos,
               borderColor:
@@ -167,8 +167,8 @@ export default function OrbitSystem({ active, activePillar, onHover }: Props) {
               opacity: dim ? 0.35 : 1,
             }}
           >
-            <span className="t-mono block text-[0.5625rem] text-mist">{pillar.index}</span>
-            <span className="font-[family-name:var(--font-display)] block text-[0.875rem] font-extrabold uppercase tracking-[-0.01em] text-ink md:text-[1rem]">
+            <span className="t-mono block text-[0.4375rem] text-mist md:text-[0.5625rem]">{pillar.index}</span>
+            <span className="font-[family-name:var(--font-display)] block text-[0.625rem] font-extrabold uppercase tracking-[-0.01em] text-ink sm:text-[0.75rem] md:text-[0.875rem] lg:text-[1rem]">
               {pillar.name}
             </span>
           </Link>
